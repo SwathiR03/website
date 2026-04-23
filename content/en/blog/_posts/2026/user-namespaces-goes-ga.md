@@ -2,7 +2,7 @@
 layout: blog
 title: "User Namespaces in Kubernetes: Finally GA"
 date: 2026-04-22
-slug: userns-ga
+slug: kubernetes-v1-36-userns-ga
 author: >
   Rodrigo Campos Catelin (Amutable),
   Giuseppe Scrivano (Red Hat)
