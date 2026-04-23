@@ -1,8 +1,8 @@
 ---
 layout: blog
 title: "Kubernetes v1.36: New Metric for Route Sync in the Cloud Controller Manager"
-date: 2026-02-26
-slug: ccm-new-metric-route-sync-total
+date: 2026-05-08T16:30:00-08:00
+slug: kubernetes-v1-36-ccm-new-metric-route-sync-total
 author: >
   [Lukas Metzner](https://github.com/lukasmetzner) (Hetzner)
 ---
