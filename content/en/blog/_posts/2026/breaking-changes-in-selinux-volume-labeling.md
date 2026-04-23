@@ -1,8 +1,8 @@
 ---
 layout: blog
-title: "Kubernetes v1.36: SELinux Volume Label Changes goes GA (and likely implications in v1.37)"
-date: 2026-04-24T16:30:00-08:00
-slug: kubernetes-v1-36-breaking-changes-in-selinux-volume-labeling
+title: "SELinux Volume Label Changes goes GA (and likely implications in v1.37)"
+date: 2026-04-22T10:35:00-08:00
+slug: breaking-changes-in-selinux-volume-labeling
 author: >
   [Jan Šafránek](https://github.com/jsafrane) (Red Hat)
   [Swathi Rao](https://github.com/SwathiR03) (Independent)
