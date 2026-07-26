@@ -78,7 +78,7 @@ Clusters without SELinux enabled see no effect at all. To learn more, check [SEL
 
 The `metrics.k8s.io` API is expected to graduate to Stable (GA) in Kubernetes v1.37 after spending nearly nine years in beta. The API provides a standard way to retrieve CPU and memory usage for pods and nodes, powering widely used Kubernetes features such as the Horizontal Pod Autoscaler (HPA) and commands like `kubectl top`.
 
-This graduation recognizes the API's stability and widespread adoption without introducing any functional changes, in line with the Kubernetes project’s goal to prevent an API from being stuck in permanent beta. Both v1 and v1beta1 will be usable during the transition, enabling developers to adopt the stable API without any effect on compatibility. Most users do not need to take any action, and the v1beta1 API will be deprecated and removed in a future release according to the Kubernetes API deprecation policy. 
+This graduation recognizes the API's stability and widespread adoption with no functional changes expected, in line with the Kubernetes project’s goal to prevent an API from being stuck in permanent beta. Both v1 and v1beta1 will be usable during the transition, enabling developers to adopt the stable API without any expected compatibility issues. Most users do not need to take any action, and the v1beta1 API will be deprecated and removed in a future release in line with the [Kubernetes API deprecation policy](https://kubernetes.io/docs/reference/using-api/deprecation-policy/). 
 
 To learn more about this enhancement, refer to [KEP-5207: metrics.k8s.io API definition](https://www.kubernetes.dev/resources/keps/5207/).
 
