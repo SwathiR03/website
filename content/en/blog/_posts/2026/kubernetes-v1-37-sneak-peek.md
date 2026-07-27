@@ -100,7 +100,7 @@ With this feature, users can easily define custom stop signals in their containe
 
 To learn more about this enhancement, refer to [KEP-4960:Container Stop Signals](https://kubernetes.dev/resources/keps/4960). 
 
-### KEP #5894: Node System Partition (Alpha)
+### Node System Partition
 
 Currently, user workload pods and system pods share the same resource boundaries. This makes it impossible to guarantee that the critical components have what they need and that the user workloads are free from system interference. As Kubernetes' target for workloads has increased, a dedicated system partition solves these problems by giving system pods their own resource-limited cgroup hierarchy, eliminating interference between the management layer and user workloads.
 
