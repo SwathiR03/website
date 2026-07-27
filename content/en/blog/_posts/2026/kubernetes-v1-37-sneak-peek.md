@@ -90,7 +90,7 @@ With Kubernetes v1.37, kubelet in User Namespace (Rootless Mode) is expected to 
 
 To learn more about this enhancement, refer to [KEP-2033: Kubelet in UserNS a.k.a. Rootless Mode](https://kubernetes.dev/resources/keps/2033). 
 
-### KEP #4960: Container Stop Signals (Beta) 
+### KEP #4960: Container Stop Signals
 
 Currently, Kubernetes has no native way to modify a container's stop signal. Whatever the value was for the stop signal during the time of building the container image, it stays the same. The only way to modify it is to rebuild the container image and change the stop signal at the image definition level.
 
