@@ -86,7 +86,7 @@ To learn more about this enhancement, refer to [KEP-5207: metrics.k8s.io API def
 
 Traditionally, Kubernetes node components such as the kubelet run with root privileges on the host. While necessary for many deployments, this also means that a vulnerability in one of these components could potentially have a greater impact on the underlying system. 
 
-With Kubernetes v1.37, kubelet in User Namespace (Rootless Mode) graduates to Beta. This enhancement allows Kubernetes node components to run inside a Linux user namespace as an unprivileged user on the host while still behaving as root within the namespace. By reducing the need for host-level root privileges, it adds an extra layer of isolation and helps limit the impact of potential vulnerabilities affecting node components. 
+With Kubernetes v1.37, kubelet in User Namespace (Rootless Mode) is expected to graduate to Beta. This enhancement allows Kubernetes node components to run inside a Linux user namespace as an unprivileged user on the host while still behaving as root within the namespace. By reducing the need for host-level root privileges, it adds an extra layer of isolation and helps limit the impact of potential vulnerabilities affecting node components. 
 
 To learn more about this enhancement, refer to [KEP-2033: Kubelet in UserNS a.k.a. Rootless Mode](https://kubernetes.dev/resources/keps/2033). 
 
