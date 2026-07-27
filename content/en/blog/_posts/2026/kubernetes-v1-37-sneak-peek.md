@@ -82,7 +82,7 @@ This graduation recognizes the API's stability and widespread adoption with no f
 
 To learn more about this enhancement, refer to [KEP-5207: metrics.k8s.io API definition](https://www.kubernetes.dev/resources/keps/5207/).
 
-### KEP #2033: Kubelet in UserNS a.k.a. Rootless Mode (Beta)
+### Kubelet in UserNS a.k.a. Rootless Mode
 
 Traditionally, Kubernetes node components such as the `kubelet` run with root privileges on the host. While necessary for many deployments, this also means that a vulnerability in one of these components could potentially have a greater impact on the underlying system. 
 
