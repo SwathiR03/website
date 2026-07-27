@@ -67,7 +67,6 @@ SELinuxMount is expected to reach GA and be enabled by default in v1.37: volumes
 
 A mount can only carry one SELinux context, so [Pods with different SELinux labels sharing a volume on the same node, which used to coexist under recursive relabeling, can now fail to start](https://www.kubernetes.dev/resources/keps/1710/#story-3-cluster-upgrade). Set `seLinuxChangePolicy: Recursive` on a Pod to keep the old behavior for just that workload.
 
-This behavior itself also isn't locked until a future release(expected to be v1.38), so disabling it cluster-wide continues to remain a viable option.
 
 Clusters without SELinux enabled see no effect at all. To learn more, check [SELinux Volume Label Changes goes GA (and likely implications in v1.37)](https://kubernetes.io/blog/2026/04/22/breaking-changes-in-selinux-volume-labeling/)
 
