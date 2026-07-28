@@ -63,7 +63,7 @@ To learn more about this deprecation, refer to [KEP-5573: Remove cgroup v1 suppo
 
 ### SELinux Volume Relabeling (SELinuxMount graduates to GA)
 
-SELinuxMount is expected to reach GA and be enabled by default in v1.37: volumes would then be mounted with `-o context=<label>` (the MountOption default) instead of being recursively relabeled, but only when the volume's CSI driver opts in via `CSIDriver.Spec.SELinuxMount: true`.
+SELinuxMount is expected to reach GA and be enabled by default in v1.37. Volumes would then be mounted with `-o context=<label>` (the MountOption default) instead of being recursively relabeled, but only when the volume's CSI driver opts in via `CSIDriver.Spec.SELinuxMount: true`.
 
 Because a single mount can only hold one SELinux context, pods with different SELinux labels sharing a volume on the same node (which previously coexisted under recursive relabeling) may now fail to start. To retain the previous recursive behavior for a specific workload, set `seLinuxChangePolicy: Recursive` in the Pod spec.
 
