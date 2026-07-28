@@ -89,7 +89,7 @@ With Kubernetes v1.37, kubelet in User Namespace (Rootless Mode) is expected to 
 
 To learn more about this enhancement, refer to [KEP-2033: Kubelet in UserNS a.k.a. Rootless Mode](https://kubernetes.dev/resources/keps/2033). 
 
-### KEP #4960: Container Stop Signals
+### Container Stop Signals
 
 Currently, Kubernetes has no native way to modify a container's stop signal. Whatever the value was for the stop signal during the time of building the container image, it stays the same. The only way to modify it is to rebuild the container image and change the stop signal at the image definition level.
 
@@ -113,7 +113,7 @@ Historically, Kubernetes has lacked an API for CSI drivers to report storage fai
 
 An initial v1.21 version of this feature introduced a `VolumeCondition` field in the CSI spec with the results surfacing as Kubernetes events. However, this approach had limitations: health was coupled to stat, events are ephemeral and unable to drive remediation controllers, and `NodeVolumeGetStats` covered only published volumes, ignoring key cases like corrupt filesystems and failed mounts. 
 
-In Kubernetes v1.37, this KEP resets graduation to alpha and introduces four new CSI RPCs. The controller plugin reports the health of storage volumes using `ControllerListVolumeHealth` (lists unhealthy volumes) and `ControllerGetVolumeHealth` (checks a specific volume). A controller-side health monitor polls these CSI controllers and stores the results in `PersistentVolumeClaim.status.healthStatus`. On the node side, the kubelet calls `NodeGetVolumeHealth` to obtain the health of individual volumes on that node and records it in `Pod.status.volumeHealth`, while `NodeGetStorageHealth` reports the health of the drivers registered to a node in `CSINode.status.storageHealth`. The error vocabulary is kept simple, extensible, and machine-parsable (`Inaccessible`, `Degraded`, etc.), with further driver-specific elaboration available via `reason` and `message`. Finally, the controller-side and node-side reports are kept independent and are hence displayed separately, providing a more holistic view of storage health to consumers. 
+In Kubernetes v1.37, this KEP resets graduation to Alpha and introduces four new CSI RPCs. The controller plugin reports the health of storage volumes using `ControllerListVolumeHealth` (lists unhealthy volumes) and `ControllerGetVolumeHealth` (checks a specific volume). A controller-side health monitor polls these CSI controllers and stores the results in `PersistentVolumeClaim.status.healthStatus`. On the node side, the kubelet calls `NodeGetVolumeHealth` to obtain the health of individual volumes on that node and records it in `Pod.status.volumeHealth`, while `NodeGetStorageHealth` reports the health of the drivers registered to a node in `CSINode.status.storageHealth`. The error vocabulary is kept simple, extensible, and machine-parsable (`Inaccessible`, `Degraded`, etc.), with further driver-specific elaboration available via `reason` and `message`. Finally, the controller-side and node-side reports are kept independent and are hence displayed separately, providing a more holistic view of storage health to consumers. 
 
 To learn more about this enhancement, refer to [KEP-1432: Volume Health Monitor](https://kubernetes.dev/resources/keps/1432).
 
