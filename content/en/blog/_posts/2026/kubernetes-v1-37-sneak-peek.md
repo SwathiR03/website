@@ -90,11 +90,11 @@ To learn more about this enhancement, refer to [KEP-2033: Kubelet in UserNS a.k.
 
 ### Container Stop Signals
 
-Currently, Kubernetes has no native way to modify a container's stop signal. Whatever the value was for the stop signal during the time of building the container image, it stays the same. The only way to modify it is to rebuild the container image and change the stop signal at the image definition level.
+A container runtime allows you to configure a [STOPSIGNAL](https://docs.docker.com/reference/dockerfile/#stopsignal), which is the process signal (such as `SIGTERM` or `SIGKILL`) sent to a container's primary process (PID 1) to request its termination. Previously in Kubernetes, the only way to modify this value was to rebuild the container image and change the stop signal at the image definition level.
 
-Changing a container’s stop signal is needed in various cases. One example is when you want to send a `SIGQUIT` stop signal instead of SIGTERM (which Kubernetes sends by default) when quitting an nginx container. Sending a SIGTERM can cause the nginx container to drop requests, whereas SIGQUIT leads to a more graceful exit. For cases like these, the user experience isn’t ideal, as there was no way native to do this in K8s. This KEP, which was first released in v1.33 as Alpha, fixes that by introducing `STOPSIGNAL` as a first-class citizen in the Pod’s container specification. 
+One example where this might be necessary is when you want to gracefully shut down an NGINX container, which requires sending `SIGQUIT` instead of `SIGTERM` (the default sent by Kubernetes), which can cause NGINX to drop active connections.
 
-With this feature, users can easily define custom stop signals in their container specs without rebuilding container images or resorting to hacky workarounds. 
+First introduced as Alpha in v1.33, this enhancement is expected to graduate to Beta in v1.37. It introduces `stopSignal` directly into `.spec.containers[].lifecycle`, allowing users to declare custom termination signals in their Pod manifests without modifying container images or relying on entrypoint scripts.
 
 To learn more about this enhancement, refer to [KEP-4960: Container Stop Signals](https://kubernetes.dev/resources/keps/4960). 
 
