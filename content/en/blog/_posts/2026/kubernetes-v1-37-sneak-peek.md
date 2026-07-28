@@ -69,7 +69,6 @@ Because a single mount can only hold one SELinux context, pods with different SE
 
 Clusters without SELinux enabled see no effect at all. To learn more, check [SELinux Volume Label Changes goes GA (and likely implications in v1.37)](/blog/2026/04/22/breaking-changes-in-selinux-volume-labeling/)
 
-
 ## Featured enhancements of Kubernetes v1.37
 
 ### Metrics API goes GA {#metrics-api-ga}
