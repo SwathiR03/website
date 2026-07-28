@@ -105,7 +105,7 @@ Currently, user workload pods and system pods share the same resource boundaries
 
 In Kubernetes v1.37, in Alpha, the goals of this would include introducing a system partition with a dedicated cgroup hierarchy for system pods (for example, the kube-system namespace), supporting memory limiting via the system partition’s cgroup root, supporting setting a dedicated CPU set for system partition pods, the kubelet will treat system and default partitions independently for resource allocation and overcommit logic, the system partition is statically defined via kubelet configuration, and the system partition will share resources with kubelet, container runtime, and other host processes.
 
-To learn more about this enhancement, refer to [KEP-5894:Node System Partition ](https://kubernetes.dev/resources/keps/5894). 
+To learn more about this enhancement, refer to [KEP-5894: Node System Partition](https://kubernetes.dev/resources/keps/5894). 
 
 ### Volume Health Monitor
 
