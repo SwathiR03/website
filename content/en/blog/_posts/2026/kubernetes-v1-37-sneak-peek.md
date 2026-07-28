@@ -102,17 +102,32 @@ To learn more about this enhancement, refer to [KEP-4960: Container Stop Signals
 
 Currently, user workload pods and system pods share the same resource boundaries. This makes it impossible to guarantee that the critical components have what they need and that the user workloads are free from system interference. As Kubernetes' target for workloads has increased, a dedicated system partition solves these problems by giving system pods their own resource-limited cgroup hierarchy, eliminating interference between the management layer and user workloads.
 
-In Kubernetes v1.37, in Alpha, the goals of this would include introducing a system partition with a dedicated cgroup hierarchy for system pods (for example, the kube-system namespace), supporting memory limiting via the system partition’s cgroup root, supporting setting a dedicated CPU set for system partition pods, the kubelet will treat system and default partitions independently for resource allocation and overcommit logic, the system partition is statically defined via kubelet configuration, and the system partition will share resources with kubelet, container runtime, and other host processes.
+In Kubernetes v1.37, this enhancement is expected to enter the Alpha stage, making it available for early feedback. The goals of this enhancement include
+introducing a system partition with a dedicated cgroup hierarchy for system pods (for example, the kube-system namespace). It also supports memory limiting
+through the system partition's cgroup root, assigning a dedicated CPU set to system partition pods. The kubelet will treat the system
+and default partitions independently for resource allocation and overcommit logic. The system partition is statically defined through kubelet configuration and 
+will also share resources with the kubelet, the container runtime, and other host processes.
 
 To learn more about this enhancement, refer to [KEP-5894: Node System Partition](https://kubernetes.dev/resources/keps/5894). 
 
 ### Volume Health Monitor
 
-Historically, Kubernetes has lacked an API for CSI drivers to report storage failures, which become evident only through failed mounts or hung I/O. Since remediation controllers had nothing machine-readable to act upon, the only way to figure out the root cause behind this failure was to cross-reference Kubernetes objects alongside external vendor dashboards. 
+Historically, Kubernetes has lacked an API for CSI drivers to report storage failures, which become evident only through failed mounts or hung I/O. Since
+remediation controllers had nothing machine-readable to act upon, the only way to figure out the root cause behind this failure was to cross-reference Kubernetes
+objects alongside external vendor dashboards. 
 
-An initial v1.21 version of this feature introduced a `VolumeCondition` field in the CSI spec with the results surfacing as Kubernetes events. However, this approach had limitations: health was coupled to stat, events are ephemeral and unable to drive remediation controllers, and `NodeVolumeGetStats` covered only published volumes, ignoring key cases like corrupt filesystems and failed mounts. 
+An initial v1.21 version of this feature introduced a `VolumeCondition` field in the CSI spec with the results surfacing as Kubernetes events. However, this
+approach had limitations: health was coupled to stat, events are ephemeral and unable to drive remediation controllers, and `NodeVolumeGetStats` covered only
+published volumes, ignoring key cases like corrupt filesystems and failed mounts. 
 
-In Kubernetes v1.37, this KEP resets graduation to Alpha and introduces four new CSI RPCs. The controller plugin reports the health of storage volumes using `ControllerListVolumeHealth` (lists unhealthy volumes) and `ControllerGetVolumeHealth` (checks a specific volume). A controller-side health monitor polls these CSI controllers and stores the results in `PersistentVolumeClaim.status.healthStatus`. On the node side, the kubelet calls `NodeGetVolumeHealth` to obtain the health of individual volumes on that node and records it in `Pod.status.volumeHealth`, while `NodeGetStorageHealth` reports the health of the drivers registered to a node in `CSINode.status.storageHealth`. The error vocabulary is kept simple, extensible, and machine-parsable (`Inaccessible`, `Degraded`, etc.), with further driver-specific elaboration available via `reason` and `message`. Finally, the controller-side and node-side reports are kept independent and are hence displayed separately, providing a more holistic view of storage health to consumers. 
+In Kubernetes v1.37, this KEP resets graduation to Alpha and introduces four new CSI RPCs. The controller plugin reports the health of storage volumes using
+`ControllerListVolumeHealth` (lists unhealthy volumes) and `ControllerGetVolumeHealth` (checks a specific volume). A controller-side health monitor polls these
+CSI controllers and stores the results in `PersistentVolumeClaim.status.healthStatus`. 
+
+On the node side, the kubelet calls `NodeGetVolumeHealth` to obtain the health of individual volumes on that node and records it in `Pod.status.volumeHealth`,
+while `NodeGetStorageHealth` reports the health of the drivers registered to a node in `CSINode.status.storageHealth`. The error vocabulary is kept simple,
+extensible, and machine-parsable (`Inaccessible`, `Degraded`, etc.), with further driver-specific elaboration available via `reason` and `message`. Finally, the
+controller-side and node-side reports are kept independent and are hence displayed separately, providing a more holistic view of storage health to consumers. 
 
 To learn more about this enhancement, refer to [KEP-1432: Volume Health Monitor](https://kubernetes.dev/resources/keps/1432).
 
