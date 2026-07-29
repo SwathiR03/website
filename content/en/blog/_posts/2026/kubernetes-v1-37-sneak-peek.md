@@ -95,18 +95,6 @@ First introduced as Alpha in v1.33, this enhancement is expected to graduate to 
 
 To learn more about this enhancement, refer to [KEP-4960: Container Stop Signals](https://kubernetes.dev/resources/keps/4960). 
 
-### Node System Partition
-
-Currently, user workload pods and system pods share the same resource boundaries. This makes it impossible to guarantee that the critical components have what they need and that the user workloads are free from system interference. As Kubernetes' target for workloads has increased, a dedicated system partition solves these problems by giving system pods their own resource-limited cgroup hierarchy, eliminating interference between the management layer and user workloads.
-
-In Kubernetes v1.37, this enhancement is expected to enter the Alpha stage, making it available for early feedback. The goals of this enhancement include
-introducing a system partition with a dedicated cgroup hierarchy for system pods (for example, the kube-system namespace). It also supports memory limiting
-through the system partition's cgroup root, assigning a dedicated CPU set to system partition pods. The kubelet will treat the system
-and default partitions independently for resource allocation and overcommit logic. The system partition is statically defined through kubelet configuration and 
-will also share resources with the kubelet, the container runtime, and other host processes.
-
-To learn more about this enhancement, refer to [KEP-5894: Node System Partition](https://kubernetes.dev/resources/keps/5894). 
-
 ### Volume Health Monitor
 
 Historically, Kubernetes has lacked an API for CSI drivers to report storage failures, which become evident only through failed mounts or hung I/O. Since
