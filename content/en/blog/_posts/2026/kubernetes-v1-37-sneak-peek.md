@@ -26,7 +26,6 @@ See [kubernetes/kubernetes#138671](https://github.com/kubernetes/kubernetes/issu
 
 Static Pods were never meant to read API resources directly, since they aren't created through the API server — but a bug let them reference Secrets or ConfigMaps via fields like `configMapRef` or `secretRef`. That bug is now fixed: as of v1.37 these references are strictly prohibited, and the `PreventStaticPodAPIReferences` feature gate that previously let you opt out of the restriction has been removed.
 
-
 See [kubernetes/kubernetes#140226](https://github.com/kubernetes/kubernetes/issues/140226) for the original issue and discussion.
 
 ### Deprecating kube-proxy's support for `ipvs` mode
