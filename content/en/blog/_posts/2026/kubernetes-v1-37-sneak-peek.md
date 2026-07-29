@@ -29,7 +29,7 @@ Static Pods were never meant to read API resources directly, since they aren't c
 
 See [kubernetes/kubernetes#140226](https://github.com/kubernetes/kubernetes/issues/140226) for the original issue and discussion.
 
-### Deprecating kube-proxy's support for ipvs mode
+### Deprecating kube-proxy's support for `ipvs` mode
 
 `kube-proxy` support for ipvs mode was introduced in v1.8 to resolve iptables performance bottlenecks. However, since the kernel ipvs API alone cannot fully implement Kubernetes Services, ipvs mode continues to use iptables underneath ([KEP-3866, "The ipvs mode of kube-proxy will not save us"](https://github.com/kubernetes/enhancements/blob/master/keps/sig-network/3866-nftables-proxy/README.md#the-ipvs-mode-of-kube-proxy-will-not-save-us)).
 
