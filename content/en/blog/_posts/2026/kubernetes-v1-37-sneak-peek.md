@@ -81,18 +81,6 @@ To learn more about this enhancement, refer to [KEP-5207: metrics.k8s.io API def
 
 Traditionally, Kubernetes node components such as the `kubelet` run with root privileges on the host. While necessary for many deployments, this also means that a vulnerability in one of these components could potentially have a greater impact on the underlying system. 
 
-With Kubernetes v1.37, kubelet in User Namespace (Rootless Mode) is expected to graduate to Beta. This enhancement allows Kubernetes node components to run inside a Linux user namespace as an unprivileged user on the host while still behaving as root within the namespace. By reducing the need for host-level root privileges, it adds an extra layer of isolation and helps limit the impact of potential vulnerabilities affecting node components. 
-
-To learn more about this enhancement, refer to [KEP-2033: Kubelet in UserNS a.k.a. Rootless Mode](https://kubernetes.dev/resources/keps/2033). 
-
-### Container Stop Signals
-
-A container runtime allows you to configure a [STOPSIGNAL](https://docs.docker.com/reference/dockerfile/#stopsignal), which is the process signal (such as `SIGTERM` or `SIGKILL`) sent to a container's primary process (PID 1) to request its termination. Previously in Kubernetes, the only way to modify this value was to rebuild the container image and change the stop signal at the image definition level.
-
-One example where this might be necessary is when you want to gracefully shut down an NGINX container, which requires sending `SIGQUIT` instead of `SIGTERM` (the default sent by Kubernetes), which can cause NGINX to drop active connections.
-
-First introduced as Alpha in v1.33, this enhancement is expected to graduate to Beta in v1.37. It introduces `stopSignal` directly into `.spec.containers[].lifecycle`, allowing users to declare custom termination signals in their Pod manifests without modifying container images or relying on entrypoint scripts.
-
 To learn more about this enhancement, refer to [KEP-4960: Container Stop Signals](https://kubernetes.dev/resources/keps/4960). 
 
 ### Volume Health Monitor
