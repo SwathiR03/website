@@ -81,7 +81,7 @@ To learn more about this enhancement, refer to [KEP-5207: metrics.k8s.io API def
 
 Traditionally, Kubernetes node components such as the `kubelet` run with root privileges on the host. While necessary for many deployments, this also means that a vulnerability in one of these components could potentially have a greater impact on the underlying system. 
 
-To learn more about this enhancement, refer to [KEP-4960: Container Stop Signals](https://kubernetes.dev/resources/keps/4960). 
+To learn more about this enhancement, refer to [KEP-2033: Kubelet in UserNS(aka Rootless Mode)](https://kubernetes.dev/resources/keps/4960). 
 
 ### Volume Health Monitor
 
