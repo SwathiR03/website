@@ -122,14 +122,18 @@ You can see the announcements of changes in the release notes for:
 
 ## Get involved
 
-The simplest way to get involved with Kubernetes is by joining one of the many [Special Interest Groups](https://kubernetes.dev/community/community-groups/sigs/) (SIGs) that align with your interests. 
-Have something you’d like to broadcast to the Kubernetes community? 
-Share your voice at our monthly [New Contributor Orientations](https://www.kubernetes.dev/docs/orientation/), and through the channels below. 
-Thank you for your continued feedback and support.
+The simplest way to get involved with Kubernetes is by joining one of the many [Special Interest Groups](https://kubernetes.dev/community/community-groups/sigs/) (SIGs) that align with your interests.
 
-- Follow us on Bluesky [@kubernetes.io](https://bsky.app/profile/kubernetes.io) for the latest updates
+If you don't know where to start, join our monthly [New Contributor Orientations](https://www.kubernetes.dev/docs/orientation/)
+where we teach the community how the project is structured, and we'll guide you on how to make your first contribution to the project.
+
+- Read more on how to become a [Kubernetes Contributor](https://www.kubernetes.dev/docs/guide/)
+- Read more about what’s happening with Kubernetes on our [blog](https://kubernetes.io/blog/)
+- Join us on [Slack](http://slack.k8s.io/)
+- Follow us on [X](https://x.com/kubernetesio)
+- Follow us on [LinkedIn](https://www.linkedin.com/company/kubernetes/)
+- Follow us on [Bluesky](https://bsky.app/profile/kubernetes.io) for the latest updates
 - Join the community discussion on [Discuss](https://discuss.kubernetes.io/)
-- Join the community on [Slack](http://slack.k8s.io/)
 - Post questions (or answer questions) on [Stack Overflow](http://stackoverflow.com/questions/tagged/kubernetes)
 - Share your [Kubernetes End User Story](https://www.cncf.io/case-studies/)
 - Read more about what’s happening with Kubernetes on the [blog](/blog/)
