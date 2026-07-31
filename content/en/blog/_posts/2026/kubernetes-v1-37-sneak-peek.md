@@ -53,7 +53,7 @@ kind: KubeletConfiguration
 failCgroupV1: false # temporary override
 ```
 
-Using this override should be considered a short-term fix. Advanced resource management capabilities, such as In-Place Pod Resizing and Tiered Memory Protection, depend entirely on cgroup v2. As the project matures, cgroup v1 support will be removed entirely, and this configuration override will no longer be available in future releases.
+Using this override should be considered a short-term fix. Advanced resource management capabilities, such as In-Place Pod Resizing and Tiered Memory Protection, depend entirely on cgroup v2. While the override remains available in Kubernetes v1.37, users are encouraged to migrate to cgroup v2, as support for cgroup v1 is planned to be removed in a future release.
 
 To learn more about this deprecation, refer to [KEP-5573: Remove cgroup v1 support](https://kubernetes.dev/resources/keps/5573).
 
