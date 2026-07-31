@@ -89,11 +89,18 @@ To learn more about this enhancement, refer to [KEP-2033: Kubelet in UserNS(aka 
 
 ### Volume Health Monitor
 
-Historically, Kubernetes has lacked an API for CSI drivers to report storage failures, which become evident only through failed mounts or hung I/O. Since
-remediation controllers had nothing machine-readable to act upon, the only way to figure out the root cause behind this failure was to cross-reference Kubernetes
-objects alongside external vendor dashboards. 
+Historically, Kubernetes has lacked an API for CSI drivers to report storage failures, which become evident only through
+failed mounts or hung I/O. Since remediation controllers had nothing machine-readable to act upon, the only way to figure out the root cause behind this failure was to cross-reference Kubernetes objects alongside external vendor dashboards. 
 
-In Kubernetes v1.37, the Volume Health Monitor enhancement is expected to reset to Alpha and introduce new CSI APIs for reporting storage health from both controllers and nodes. The health information would be surfaced through Kubernetes resources in a machine-readable format, making it easier for users and automated remediation systems to detect and respond to storage issues.
+In Kubernetes v1.37, this KEP resets graduation to Alpha after an initial implementation in v1.21 and introduces four new CSI
+RPCs. The controller plugin reports the health of storage volumes using `ControllerListVolumeHealth` (lists unhealthy volumes) and `ControllerGetVolumeHealth` (checks a specific volume). A controller-side health monitor polls these CSI controllers and stores the results in
+`PersistentVolumeClaim.status.healthStatus`. 
+
+On the node side, the kubelet calls `NodeGetVolumeHealth` to obtain the health of individual volumes on that node and records
+it in `Pod.status.volumeHealth`, while `NodeGetStorageHealth` reports the health of the drivers registered to a node in
+`CSINode.status.storageHealth`. 
+
+The error vocabulary is kept simple, extensible, and machine-parsable (`Inaccessible`, `Degraded`, etc.), with further driver-specific elaboration available via `reason` and `message`. Finally, the controller-side and node-side reports are kept independent and are hence displayed separately, providing a more holistic view of storage health to consumers. 
 
 To learn more about this enhancement, refer to [KEP-1432: Volume Health Monitor](https://kubernetes.dev/resources/keps/1432).
 
