@@ -46,17 +46,31 @@ few select updates the Release Team would like to highlight!
 
 ### Stable: Resilient Watchcache Initialization
 
-Kubernetes v1.37 sees the Resilient Watchcache Initialization graduate to Stable.  This kube-apiserver feature gate, WatchCacheInitializationPostStartHook, was enabled by default since v1.36.  This hardens the API server startup and recovery.  Watchcache initialization and reinitialization no longer create the thundering-herd requests against etcd, and requests are handled gracefully instead of piling up while the cache warms. 
+Kubernetes v1.37 sees the Resilient Watchcache Initialization graduate to Stable. This `kube-apiserver` feature gate,
+`WatchCacheInitializationPostStartHook`, was enabled by default since v1.36.  This hardens the API server startup and
+recovery.  Watchcache initialization and reinitialization no longer create the thundering-herd requests against etcd, and
+requests are handled gracefully instead of piling up while the cache warms. 
 
-Instead of allowing expensive list and watch requests to overload etcd or exhaust API Priority and Fairness capacity, kube-apiserver now safely delegates bounded requests and rejects others with HTTP 429 responses. This reduces the risk of control plane outages in large clusters.  Clients (including custom controllers and operators) should be designed to handle HTTP `429 Too Many Requests` responses gracefully by respecting `Retry-After` headers and implementing exponential backoff. 
+Instead of allowing expensive list and watch requests to overload etcd or exhaust API Priority and Fairness capacity, `kube
+apiserver` now safely delegates bounded requests and rejects others with HTTP 429 responses. This reduces the risk of control
+plane outages in large clusters.  Clients (including custom controllers and operators) should be designed to handle HTTP `429 Too Many Requests` responses gracefully by respecting `Retry-After` headers and implementing exponential backoff. 
 
 This work was done as part of [KEP #4568: Resilient Watchcache Initialization](https://www.kubernetes.dev/resources/keps/4568/) led by [SIG API Machinery](https://www.kubernetes.dev/community/community-groups/sigs/api-machinery/).
 
 ### Beta: `HPAScaleToZero` 
 
-In Kubernetes v1.37, the feature gate `HPAScaleToZero` is graduating to Beta.  First introduced in Kubernetes v1.16, it will be enabled by default starting with Kubernetes v1.37.  This allows for Horizontal Pod Autoscalers to scale workloads using object or external metrics down to zero pods when idle, then restore them when demand returns.  This can reduce costs for queue consumers, batch jobs, and GPU workloads. Setting the spec.minReplicas: 0 applies this functionality for workloads.  CPU and memory metrics are unsupported because they depend on active pods. While the HorizontalPodAutoscaler is holding a workload at zero replicas, it records a `ScaledToZero` condition with `True` in the HorizontalPodAutoscaler's status. The HorizontalPodAutoscaler uses this condition to distinguish a workload that it scaled to zero (and will scale back up when the metric returns) from one that was manually deactivated by setting its replica count to 0. Once the workload is scaled back up, the condition is set to False with the reason NotScaledToZero. 
+In Kubernetes v1.37, the feature gate `HPAScaleToZero` is graduating to Beta.  First introduced in Kubernetes v1.16, it will
+be enabled by default starting with Kubernetes v1.37.  This allows for Horizontal Pod Autoscalers to scale workloads using
+object or external metrics down to zero pods when idle, then restore them when demand returns.  This can reduce costs for
+queue consumers, batch jobs, and GPU workloads. Setting the `spec.minReplicas: 0` applies this functionality for workloads. 
+CPU and memory metrics are unsupported because they depend on active pods. While the HorizontalPodAutoscaler is holding a
+workload at zero replicas, it records a `ScaledToZero` condition with `True` in the HorizontalPodAutoscaler's status. The
+`HorizontalPodAutoscaler` uses this condition to distinguish a workload that it scaled to zero (and will scale back up when
+the metric returns) from one that was manually deactivated by setting its replica count to 0. Once the workload is scaled
+back up, the condition is set to False with the reason `NotScaledToZero`. 
 
-This work was done as part of [KEP #2021: HPA supports scaling to/from zero pods for object/external metrics](https://www.kubernetes.dev/resources/keps/2021/) led by [SIG Autoscaling](https://www.kubernetes.dev/community/community-groups/sigs/autoscaling/).
+This work was done as part of [KEP #2021: HPA supports scaling to/from zero pods for object/external metrics
+(https://www.kubernetes.dev/resources/keps/2021/) led by [SIG Autoscaling](https://www.kubernetes.dev/community/community-groups/sigs/autoscaling/).
 
 ### Alpha: Pod-level Checkpoint/Restore 
 
@@ -79,10 +93,17 @@ This release includes a total of 16 enhancements promoted to Stable :
 ### KYAML 
 
 YAML is a human-readable data serialization format. In Kubernetes, YAML files are used to define and configure resources,
-such as Pods, ReplicaSets, and Deployments. However, complex YAML is difficult to read. YAML's significant whitespace requires careful attention to indentation and nesting, while its optional string quoting can lead to unexpected type coercion (see [The Norway Problem](https://hitchdev.com/strictyaml/why/implicit-typing-removed/)). Although JSON is a viable alternative, it lacks support for comments and has strict requirements for trailing commas and quoted keys.
+such as Pods, ReplicaSets, and Deployments. However, complex YAML is difficult to read. YAML's significant whitespace
+requires careful attention to indentation and nesting, while its optional string quoting can lead to unexpected type coercion
+(see [The Norway Problem](https://hitchdev.com/strictyaml/why/implicit-typing-removed/)). Although JSON is a viable
+alternative, it lacks support for comments and has strict requirements for trailing commas and quoted keys.
 
-KYAML is a safer and less ambiguous subset of YAML designed specifically for Kubernetes, not a replacement for it. Every KYAML file is valid YAML, so KYAML is a valid input for any version of kubectl, and spec files do not need to be written in strict YAML for the input to be parsed. Your existing manifests, tooling, and pipelines don't need to change.
-Introduced as an Alpha feature in v1.34 and graduating to Beta in v1.35, KYAML graduates to Stable in v1.37 with conformance testing complete, and `kubectl get -o kyaml` is now Stable . With this graduation, the example manifests on kubernetes.io are moving to the KYAML dialect. KYAML is an additional, optional output and authoring style alongside plain YAML, not a replacement. 
+KYAML is a safer and less ambiguous subset of YAML designed specifically for Kubernetes, **not a replacement for it**. Every
+KYAML file is valid YAML, so KYAML is a valid input for any version of kubectl, and spec files do not need to be written in
+KYAML for the input to be parsed. Your existing manifests, tooling, and pipelines don't need to change.
+Introduced as an Alpha feature in v1.34 and graduating to Beta in v1.35, KYAML graduates to Stable in v1.37 with conformance
+testing complete, and `kubectl get -o kyaml` is now Stable . With this graduation, the example manifests on kubernetes.io are
+moving to the KYAML dialect. 
 
 An example of how you can use the kyaml output with kubectl:
 
@@ -109,44 +130,67 @@ kubectl get pod nginx -o kyaml
 …
 ```
 
-To learn more about KYAML, check out [How to Pretty-Print Your Kubernetes YAML as KYAML and Why You'd Want To] (https://kubernetes.io/blog/2026/08/11/how-to-pretty-print-kubernetes-yaml-as-kyaml/)
+To learn more about KYAML, check out [How to Pretty-Print Your Kubernetes YAML as KYAML and Why You'd Want To
+(https://kubernetes.io/blog/2026/08/11/how-to-pretty-print-kubernetes-yaml-as-kyaml/)
 
-This work was done as part of [KEP #5295: KYAML](https://www.kubernetes.dev/resources/keps/5295/) led by [SIG CLI](https://www.kubernetes.dev/community/community-groups/sigs/cli/).
+This work was done as part of [KEP #5295: KYAML](https://www.kubernetes.dev/resources/keps/5295/) led by [SIG CLI
+(https://www.kubernetes.dev/community/community-groups/sigs/cli/).
 
 ### The metrics.k8s.io API 
 
-The metrics.k8s.io API graduates to Stable in Kubernetes v1.37 after spending nearly nine years in Beta. The API provides a standard way to retrieve CPU and memory usage for pods and nodes, powering widely used Kubernetes features such as the HorizontalPodAutoscaler (HPA) and commands like `kubectl top`.
+The metrics.k8s.io API graduates to Stable in Kubernetes v1.37 after spending nearly nine years in Beta. The API provides a
+standard way to retrieve CPU and memory usage for pods and nodes, powering widely used Kubernetes features such as the
+`HorizontalPodAutoscaler`(HPA) and commands like `kubectl top`.
 
-This graduation recognizes the API's stability and widespread adoption, with no functional changes expected, falling in line with the Kubernetes project’s goal to avoid permanent Beta APIs by graduating them or introducing a new Beta API. Both v1 and v1beta1 will remain usable during the transition, adhering to the API deprecation policy, ensuring a smooth transition and enabling developers to adopt the Stable API without breaking existing workflows.
+This graduation recognizes the API's stability and widespread adoption, with no functional changes expected, falling in line
+with the Kubernetes project’s goal to avoid permanent Beta APIs by graduating them or introducing a new Beta API. Both `v1`
+and `v1beta1` will remain usable during the transition, adhering to the API deprecation policy, ensuring a smooth transition
+and enabling developers to adopt the Stable API without breaking existing workflows.
 
-This work was done as part of [KEP #5207: metrics.k8s.io API Definition](https://www.kubernetes.dev/resources/keps/5207/) led by [SIG Instrumentation](https://www.kubernetes.dev/community/community-groups/sigs/instrumentation/).
+This work was done as part of [KEP #5207: metrics.k8s.io API Definition](https://www.kubernetes.dev/resources/keps/5207/) led
+by [SIG Instrumentation](https://www.kubernetes.dev/community/community-groups/sigs/instrumentation/).
 
 ### `SELinuxMount` and `SELinuxChangePolicy` 
 
-In Kubernetes v1.37, SELinuxMount and `SELinuxChangePolicy` flags reach Stable and are enabled by default: this means that volumes get mounted with -o context=<label> (the MountOption default) instead of being recursively relabeled, but only when the volume's CSI driver opts in via CSIDriver.Spec.SELinuxMount: true.
+In Kubernetes v1.37, SELinuxMount and `SELinuxChangePolicy` flags reach Stable and are enabled by default: this means that
+volumes get mounted with `-o context=<label>` (the MountOption default) instead of being recursively relabeled, but only when
+the volume's CSI driver opts in via `CSIDriver.Spec.SELinuxMount: true`.
 
-A mount can only carry one SELinux context, so [Pods with different SELinux labels sharing a volume on the same node, which used to coexist under recursive relabeling, can now fail to start](https://www.kubernetes.dev/resources/keps/1710/#story-3-cluster-upgrade). To retain the old behavior for a workload, it is advised to set the seLinuxChangePolicy: Recursive on a Pod.
+A mount can only carry one SELinux context, so [Pods with different SELinux labels sharing a volume on the same node, which
+used to coexist under recursive relabeling, can now fail to start](https://www.kubernetes.dev/resources/keps/1710/#story-3
+cluster-upgrade). To retain the old behavior for a workload, it is advised to set the `seLinuxChangePolicy: Recursive on a
+Pod`.
 
 This behavior itself also isn't locked until v1.38, so disabling it cluster-wide remains an option for one more release.
 
-Clusters without SELinux enabled see no effect at all. To learn more, check [SELinux Volume Label Changes goes GA (and likely implications in v1.37)](https://kubernetes.io/blog/2026/04/22/breaking-changes-in-selinux-volume-labeling/) 
+Clusters without SELinux enabled see no effect at all. To learn more, check [SELinux Volume Label Changes goes GA (and likely
+implications in v1.37)](https://kubernetes.io/blog/2026/04/22/breaking-changes-in-selinux-volume-labeling/) 
 
-This work was done as part of [KEP #1710: Speed up recursive SELinux label change](https://www.kubernetes.dev/resources/keps/1710/) led by [SIG Storage](https://www.kubernetes.dev/community/community-groups/sigs/storage/).
+This work was done as part of [KEP #1710: Speed up recursive SELinux label change
+(https://www.kubernetes.dev/resources/keps/1710/) led by [SIG Storage](https://www.kubernetes.dev/community/communitygroups/sigs/storage/).
 
 ### DRA Features Graduating to Stable 
 
 #### DRA: Resource Claim Status with possible standardized network interface data
 
-`ResourceClaim.Status.Devices` reaches Stable in Kubernetes v1.37, which allows drivers to report device-specific device status data for each allocated device in a resource claim. This makes it easier to see how a device is configured, troubleshoot problems, and use the device with other services. For example, reporting a network device’s name, MAC address, and IP address can help network services use and manage it. The proposal also defines standard device status information for common device types, such as network devices, and allows third-party tools and services to build new features using this information.
+`ResourceClaim.Status.Devices` reaches Stable in Kubernetes v1.37, which allows drivers to report device-specific device
+status data for each allocated device in a resource claim. This makes it easier to see how a device is configured,
+troubleshoot problems, and use the device with other services. For example, reporting a network device’s name, MAC address,
+and IP address can help network services use and manage it. The proposal also defines standard device status information for
+common device types, such as network devices, and allows third-party tools and services to build new features using this
+information.
 
-This work was done as part of [KEP #4817: DRA Resource Claim Status With Possible Standardized Network Interface Data](https://www.kubernetes.dev/resources/keps/4817/) led by [SIG Node](https://www.kubernetes.dev/community/community-groups/sigs/node/) and [SIG Network](https://www.kubernetes.dev/community/community-groups/sigs/network/).
+This work was done as part of [KEP #4817: DRA Resource Claim Status With Possible Standardized Network Interface Data
+(https://www.kubernetes.dev/resources/keps/4817/) led by [SIG Node](https://www.kubernetes.dev/community/communitygroups/sigs/node/) and [SIG Network](https://www.kubernetes.dev/community/community-groups/sigs/network/).
 
 
 #### DRA: Handle extended resource requests via DRA Driver
 
-DRA Extended Resource support reaches Stable in Kubernetes v1.37. This feature allows DRA drivers to fulfill requests made through the traditional extended resource API, such as nvidia.com/gpu: 3 in a Pod spec, without requiring a separate device plugin.
+DRA Extended Resource support reaches Stable in Kubernetes v1.37. This feature allows DRA drivers to fulfil requests made
+through the traditional extended resource API, such as `abc.com/gpu: 3` in a Pod spec, without requiring a separate device
+plugin.
 
-With this mechanism, an extended resource name can be assigned directly to a DeviceClass. Pods requesting that resource can then have a device allocated through DRA without needing to define a ResourceClaim in the workload.
+With this mechanism, an extended resource name can be assigned directly to a `DeviceClass`. Pods requesting that resource can then have a device allocated through DRA without needing to define a `ResourceClaim` in the workload.
 
 This work was done as part of [KEP #5004: DRA Extended Resource](https://www.kubernetes.dev/resources/keps/5004/) led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/).
 
@@ -159,28 +203,46 @@ This work was done as part of [KEP #5055: DRA: device taints and tolerations
 
 #### DRA: Standard numaNode Device Attribute
 
-The Standard NUMA Node Device Attribute is introduced as a new Stable feature in Kubernetes v1.37. It standardizes resource.kubernetes.io/numaNode as a shared attribute name for device NUMA node information, allowing devices managed by different DRA drivers to be compared based on the same NUMA node. This avoids each driver defining its own attribute name and provides a consistent way to identify NUMA placement across devices. The enhancement lands directly as Stable because it is a naming and registration KEP with no feature gate or in-tree behavior changes.
+The Standard NUMA Node Device Attribute is introduced as a new Stable feature in Kubernetes v1.37. It standardizes
+`resource.kubernetes.io/numaNode` as a shared attribute name for device NUMA node information, allowing devices managed by
+different DRA drivers to be compared based on the same NUMA node. This avoids each driver defining its own attribute name and
+provides a consistent way to identify NUMA placement across devices. The enhancement lands directly as Stable because it is a
+naming and registration KEP with no feature gate or in-tree behavior changes.
 
 This work was done as part of [KEP #6072: DRA: Standard numaNode Device Attribute
 ](https://www.kubernetes.dev/resources/keps/6072/) led by [SIG Node](https://www.kubernetes.dev/community/community-groups/sigs/node).
 
 ### Node Declared Features
 
-Node Declared Features graduate to Stable in Kubernetes v1.37, providing a framework to declare the availability of specific, feature-gated Kubernetes features for Nodes. This would then be used by control plane components (such as the kube-scheduler, admission controllers, or the API server itself) to manage version skew.  
+Node Declared Features graduate to Stable in Kubernetes v1.37, providing a framework to declare the availability of specific, feature-gated Kubernetes features for Nodes. This would then be used by control plane components (such as the `kube-scheduler`, admission controllers, or the API server itself) to manage version skew.  
 
-This KEP introduces a new declaredFeatures field to the Node’s .status, which is used to declare a feature graduating through the Alpha->Beta->Stable stages. The Node Declared Features framework should be used for new features and should not be used as a permanent node attribute, and is recommended to be removed as part of the post-Stable feature cleanup process. 
+This KEP introduces a new `declaredFeatures` field to the Node’s `.status`, which is used to declare a feature graduating
+through the Alpha->Beta->Stable stages. The Node Declared Features framework should be used for new features and should not
+be used as a permanent node attribute, and is recommended to be removed as part of the post-Stable feature cleanup process. 
 
-The Kubelet determines the declared features when it starts, based only on feature gates and the node’s static configuration, so any changes require a Kubelet restart. A feature should be declared only if components such as the kube-scheduler, admission controllers, or API server can use this information to make decisions, such as choosing nodes for Pods or validating requests. Features should not be declared when their support depends on specific configurations, as this could cause the control plane to incorrectly assume that a node supports or does not support the feature.
+The Kubelet determines the declared features when it starts, based only on feature gates and the node’s static configuration,
+so any changes require a Kubelet restart. A feature should be declared only if components such as the kube-scheduler,
+admission controllers, or API server can use this information to make decisions, such as choosing nodes for Pods or
+validating requests. Features should not be declared when their support depends on specific configurations, as this could
+cause the control plane to incorrectly assume that a node supports or does not support the feature.
 
 This work was done as part of [KEP #5328: Node Declared Features](https://www.kubernetes.dev/resources/keps/5328/) led by [SIG Node](https://www.kubernetes.dev/community/community-groups/sigs/node/).
 
 ### Storage Version Migrator 
 
-Kubernetes v1.37 sees the StorageVersionMigration API (storagemigration.k8s.io/v1) graduate to Stable and become enabled by default. It helps migrate existing CRD resources from an older storage version to the new storage version after an API upgrade, such as when the preferred storage version changes from `v1beta1` to `v1`. It can also be used to rewrite existing data after a change to encryption at rest, so that stale data is stored using the new encryption settings.
+Kubernetes v1.37 sees the StorageVersionMigration API (storagemigration.k8s.io/v1) graduate to Stable and become enabled by
+default. It helps migrate existing CRD resources from an older storage version to the new storage version after an API
+upgrade, such as when the preferred storage version changes from `v1beta1` to `v1`. It can also be used to rewrite existing
+data after a change to encryption at rest, so that stale data is stored using the new encryption settings.
 
-Historically, cluster administrators and Custom Resource Definition authors had to use manual kubectl get or kubectl replace scripts, or deploy the out-of-tree kube-storage-version-migrator component to rewrite existing resources. These approaches were often tedious, error-prone, and difficult to monitor.
+Historically, cluster administrators and Custom Resource Definition authors had to use manual `kubectl get` or `kubectl
+replace` scripts, or deploy the out-of-tree `kube-storage-version-migrator` component to rewrite existing resources. These
+approaches were often tedious, error-prone, and difficult to monitor.
 
-To start a storage version migration, users would need to create a declarative StorageVersionMigration object. The built-in StorageVersionMigrator controller in the Kubernetes control plane watches for these objects and automatically migrates existing resources to the default storage version for that API. Since StorageVersionMigration is a standard Kubernetes API, CRD authors can trigger migrations as part of a CRD upgrade instead of managing the migration separately.
+To start a storage version migration, users would need to create a declarative `StorageVersionMigration` object. The built-in
+`StorageVersionMigrator` controller in the Kubernetes control plane watches for these objects and automatically migrates
+existing resources to the default storage version for that API. Since `StorageVersionMigration` is a standard Kubernetes API,
+CRD authors can trigger migrations as part of a CRD upgrade instead of managing the migration separately.
 
 This work was done as part of [KEP #4192: Move Storage Version Migrator in-tree](https://www.kubernetes.dev/resources/keps/4192/) led by [SIG API Machinery](https://www.kubernetes.dev/community/community-groups/sigs/api-machinery/).
 
@@ -188,7 +250,7 @@ This work was done as part of [KEP #4192: Move Storage Version Migrator in-tree]
 
 Pod Certificates and the closely related Cluster Trust Bundles graduate to Stable in Kubernetes 1.37, providing first-class support for workloads to use X.509 credentials and trust anchors to Pods instead of relying solely on JWTs, which have the downside of being bearer tokens. 
 
-In production, the developer or administrator chooses a signer name and deploys a signer controller that watches PodCertificateRequest objects,  issues and refreshes certificates for eligible Pods, and maintains the corresponding ClusterTrustBundle objects containing the trust anchors needed to verify those certificates. A workload then opts into this identity by defining a podCertificate projected volume with the chosen signer name and a clusterTrustBundle projected volume with the same signer name plus the label selector specified by the signer. 
+In production, the developer or administrator chooses a signer name and deploys a signer controller that watches `PodCertificateRequest` objects,  issues and refreshes certificates for eligible Pods, and maintains the corresponding `ClusterTrustBundle` objects containing the trust anchors needed to verify those certificates. A workload then opts into this identity by defining a `podCertificate` projected volume with the chosen signer name and a `ClusterTrustBundle` projected volume with the same signer name plus the label selector specified by the signer. 
 
 This work was done as part of two KEPs - [KEP #4317: Pod Certificates](https://www.kubernetes.dev/resources/keps/4317/) and [KEP #3257: Cluster Trust Bundles](https://www.kubernetes.dev/resources/keps/3257/) led by [SIG Auth](https://www.kubernetes.dev/community/community-groups/sigs/auth/).
 
@@ -198,16 +260,29 @@ This work was done as part of two KEPs - [KEP #4317: Pod Certificates](https://w
 
 As Kubernetes becomes the de facto standard for managing AI/ML workloads at scale, scheduling workloads such as AI/ML training jobs and HPC simulations becomes more important than ever. However, scheduling becomes challenging because the default Kubernetes scheduler schedules Pods individually, which can result in some Pods being scheduled while others remain pending due to insufficient resources. This partial scheduling can lead to deadlocks and inefficient use of cluster resources.
 
-Gang Scheduling graduates to Beta in Kubernetes v1.37, improving upon native support for “gang scheduling” through the  Workload API and PodGroup concept. This feature implements an “all-or-nothing” scheduling strategy, ensuring that a defined group of Pods is scheduled only when the cluster has sufficient resources to accommodate the entire group. The Beta graduation of this enhancement also introduces workload-aware preemption to avoid premature preemptions that do not help a workload make progress, along with `PodGroup` queueing to better coordinate competing workloads. Importantly, it addresses livelock scenarios that can occur when multiple workloads are being scheduled simultaneously by the kube-scheduler, preventing them from repeatedly interfering with one another without making progress.
+Gang Scheduling graduates to Beta in Kubernetes v1.37, improving upon native support for “gang scheduling” through the  Workload API and PodGroup concept. This feature implements an “all-or-nothing” scheduling strategy, ensuring that a defined group of Pods is scheduled only when the cluster has sufficient resources to accommodate the entire group. The Beta graduation of this enhancement also introduces workload-aware preemption to avoid premature preemptions that do not help a workload make progress, along with `PodGroup` queueing to better coordinate competing workloads. Importantly, it addresses livelock scenarios that can occur when multiple workloads are being scheduled simultaneously by the `kube-scheduler`, preventing them from repeatedly interfering with one another without making progress.
 
 This work was done as part of [KEP #4671: Gang Scheduling](https://www.kubernetes.dev/resources/keps/4671/) led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/).
 
 
 ### Native Histogram Support for Kubernetes Metrics
 
-Kubernetes exposes hundreds of histogram metrics in [Prometheus format](https://prometheus.io/docs/instrumenting/exposition_formats/) across its control plane components, which are essential to monitor cluster health and debug performance issues. However, classical Prometheus histograms relied on static, pre-defined buckets that forced a compromise between data accuracy and memory usage. To mitigate this, Prometheus introduced Native histograms that use exponential bucket boundaries instead of fixed boundaries, providing significant storage efficiency, improved query performance, and finer-grained visibility into distributions while maintaining full backward compatibility with existing monitoring infrastructure. 
+Kubernetes exposes hundreds of histogram metrics in [Prometheus format
+(https://prometheus.io/docs/instrumenting/exposition_formats/) across its control plane components, which are essential to
+monitor cluster health and debug performance issues. However, classical Prometheus histograms relied on static, pre-defined
+buckets that forced a compromise between data accuracy and memory usage. To mitigate this, Prometheus introduced Native
+histograms that use exponential bucket boundaries instead of fixed boundaries, providing significant storage efficiency,
+improved query performance, and finer-grained visibility into distributions while maintaining full backward compatibility
+with existing monitoring infrastructure. 
 
-Kubernetes v1.37 graduates native histogram support for Kubernetes metrics to Beta. Building on the Alpha implementation, which introduced the `NativeHistograms` feature gate, the Beta phase improves the implementation and rollout experience. When enabled, Kubernetes components expose histograms in both classic and native formats when the requested format supports Native Histograms, such as `PrometheusProto`, allowing existing dashboards and alerts to continue working while users migrate at their own pace. The implementation also refactors histograms created in `init()` functions to use lazy initialization, ensuring native histogram options are correctly applied after feature gates are parsed. These changes provide a more reliable implementation while retaining safe rollout and rollback through the feature gate or Prometheus-side configuration for Prometheus 3.x users.
+Kubernetes v1.37 graduates native histogram support for Kubernetes metrics to Beta. Building on the Alpha implementation,
+which introduced the `NativeHistograms` feature gate, the Beta phase improves the implementation and rollout experience. When
+enabled, Kubernetes components expose histograms in both classic and native formats when the requested format supports Native
+Histograms, such as `PrometheusProto`, allowing existing dashboards and alerts to continue working while users migrate at
+their own pace. The implementation also refactors histograms created in `init()` functions to use lazy initialization,
+ensuring native histogram options are correctly applied after feature gates are parsed. These changes provide a more reliable
+implementation while retaining safe rollout and rollback through the feature gate or Prometheus-side configuration for
+Prometheus 3.x users.
 
 This work was done as part of [KEP #5808: Native Histogram Support for Kubernetes Metrics
 ](https://www.kubernetes.dev/resources/keps/5808/) led by SIG Instrumentation.
@@ -216,41 +291,63 @@ This work was done as part of [KEP #5808: Native Histogram Support for Kubernete
 
 ### Workload-aware Preemption 
 
-Kubernetes traditionally performs preemption at the Pod level, which can be inefficient for workloads made up of multiple tightly coupled Pods. In Kubernetes v1.37, Workload-aware Preemption graduates to Beta, allowing the scheduler to consider a PodGroup when making preemption decisions. This helps the scheduler consider the workload as a whole when preempting lower-priority workloads, reducing cases where individual Pods are disrupted without providing enough capacity for the workload to make progress.
+Kubernetes traditionally performs preemption at the Pod level, which can be inefficient for workloads made up of multiple
+tightly coupled Pods. In Kubernetes v1.37, Workload-aware Preemption graduates to Beta, allowing the scheduler to consider a
+`PodGroup` when making preemption decisions. This helps the scheduler consider the workload as a whole when preempting lower
+priority workloads, reducing cases where individual Pods are disrupted without providing enough capacity for the workload to
+make progress.
 
 This work was done as part of [KEP #5710](https://www.kubernetes.dev/resources/keps/5710/) led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/).
 
 ### DRA: ResourceClaim Support for Workloads - both WAS and DRA feature
 
-Dynamic Resource Allocation (DRA) allows Pods to request specialized resources through ResourceClaims. In Kubernetes v1.37, DRA ResourceClaim Support for Workloads graduates to Beta, allowing  Workload and PodGroup APIs to associate ResourceClaims and ResourceClaimTemplates with the groups of Pods. This allows ResourceClaims to be shared across a workload rather than reserved individually for each Pod, while ResourceClaimTemplates can create claims for PodGroup automatically.
+Dynamic Resource Allocation (DRA) allows Pods to request specialized resources through ResourceClaims. In Kubernetes v1.37,
+DRA `ResourceClaim` Support for Workloads graduates to Beta, allowing  `Workload` and `PodGroup` APIs to associate
+`ResourceClaims` and `ResourceClaimTemplates` with the groups of Pods. This allows `ResourceClaims` to be shared across a
+workload rather than reserved individually for each Pod, while `ResourceClaimTemplates` can create claims for `PodGroup`
+automatically.
 
-This work was done as part of KEP #5729: https://www.kubernetes.dev/resources/keps/5729/ Led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/)
+This work was done as part of KEP #5729: https://www.kubernetes.dev/resources/keps/5729/ Led by [SIG Scheduling
+(https://www.kubernetes.dev/community/community-groups/sigs/scheduling/)
 
 ### cAdvisor-less, CRI-full Container and Pod Stat
 
-Kubernetes currently relies on both cAdvisor and the Container Runtime Interface (CRI) to collect container and pod statistics. This can result in duplicated work and makes it harder to determine where a particular metric comes from. 
+Kubernetes currently relies on both cAdvisor and the Container Runtime Interface (CRI) to collect container and pod
+statistics. This can result in duplicated work and makes it harder to determine where a particular metric comes from. 
 
-In Kubernetes v1.37, the cAdvisor-less, CRI-full Container and Pod Stats enhancement graduates to Beta. The enhancement expands the CRI to provide the container and pod statistics needed by Kubernetes, allowing the kubelet to get these metrics directly from the container runtime instead of relying on cAdvisor for them.
+In Kubernetes v1.37, the cAdvisor-less, CRI-full Container and Pod Stats enhancement graduates to Beta. The enhancement
+expands the CRI to provide the container and pod statistics needed by Kubernetes, allowing the kubelet to get these metrics
+directly from the container runtime instead of relying on cAdvisor for them.
 
-This moves container and pod metrics toward a single source of truth, while reducing duplicated metric collection and simplifying how the kubelet gathers and exposes these statistics.
+This moves container and pod metrics toward a single source of truth, while reducing duplicated metric collection and
+simplifying how the kubelet gathers and exposes these statistics.
 
 This work was done as part of [KEP #2371: cAdvisor-less, CRI-full Container and Pod Stats](https://www.kubernetes.dev/resources/keps/2371/) led by [SIG Node](https://www.kubernetes.dev/community/community-groups/sigs/node/).
 
 ### Support memory QoS with cgroups v2  
 
-Memory QoS uses cgroups v2 to improve memory protection and isolation for Kubernetes workloads. It uses memory requests and limits to configure cgroup controls that can protect requested memory from reclamation and throttle memory usage before workloads reach their hard limits. This can help reduce the impact of memory pressure on memory-sensitive workloads and improve node stability.
+Memory QoS uses cgroups v2 to improve memory protection and isolation for Kubernetes workloads. It uses memory requests and
+limits to configure cgroup controls that can protect requested memory from reclamation and throttle memory usage before
+workloads reach their hard limits. This can help reduce the impact of memory pressure on memory-sensitive workloads and
+improve node stability.
 
-In Kubernetes v1.37, Memory QoS is graduating to Beta. The feature uses cgroups v2 memory controls such as `memory.min`, `memory.low` and `memory.high` to provide different levels of memory protection and throttling. For example, memory requests can be used to protect memory from reclamation, while `memory.high` can be used to throttle workloads that exceed their configured threshold. 
+In Kubernetes v1.37, Memory QoS is graduating to Beta. The feature uses cgroups v2 memory controls such as `memory.min`,
+`memory.low` and `memory.high` to provide different levels of memory protection and throttling. For example, memory requests
+can be used to protect memory from reclamation, while `memory.high` can be used to throttle workloads that exceed their
+configured threshold. 
 
-
-The `MemoryQoS` is enabled by default in v1.37. Operators can control memory protection through the kubelet’s `memoryReservationPolicy` setting and configure memory throttling with `memoryThrottlingFactor`. The defaults are designed to avoid introducing unexpected memory throttling for existing workloads when upgrading to v1.37, while allowing operators to opt into the additional memory protection capabilities. 
-
+The `MemoryQoS` is enabled by default in v1.37. Operators can control memory protection through the kubelet’s
+`memoryReservationPolicy` setting and configure memory throttling with `memoryThrottlingFactor`. The defaults are designed to
+avoid introducing unexpected memory throttling for existing workloads when upgrading to v1.37, while allowing operators to
+opt into the additional memory protection capabilities. 
 
 This work was done as part of [KEP #2570: Support memory QoS with cgroups v2](https://www.kubernetes.dev/resources/keps/2570/) led by [SIG Node](https://www.kubernetes.dev/community/community-groups/sigs/node/).
 
 ### Pod-level Resource Managers 
 
-In Kubernetes v1.37, Pod-level Resource Managers graduate to Beta, allowing the Topology, CPU, and Memory Managers to use the resources defined for an entire Pod when making allocation and NUMA alignment decisions. This makes it possible to manage a Pod as a single resource unit while still supporting different resource requirements between the containers within it. 
+In Kubernetes v1.37, Pod-level Resource Managers graduate to Beta, allowing the Topology, CPU, and Memory Managers to use the
+resources defined for an entire Pod when making allocation and NUMA alignment decisions. This makes it possible to manage a
+Pod as a single resource unit while still supporting different resource requirements between the containers within it. 
 
 With pod-level resource management, a Pod can reserve a NUMA-aligned pool of CPU and memory based on its overall resource budget. Containers that require dedicated resources can receive exclusive portions of that pool, while other containers, such as sidecars or supporting workloads, can share the remaining resources. This is particularly useful for performance-sensitive workloads such as AI/ML and high-performance computing, where keeping resources close to each other on the same NUMA node can improve performance without requiring every container in the Pod to have dedicated resources. 
 
@@ -312,27 +409,55 @@ This work was done as part of [KEP #6178: Concurrent Watch Object Decode](https:
 
 ### Stale Controller Mitigation
 
-Every controller in kube-controller-manager works off a local cache built from watching the kube-apiserver, and that watch stream is only eventually consistent. A change can show up in milliseconds, or it can take seconds or even minutes under load. Today operators have no visibility into that lag and no way to tell a normal delay from a controller that's fallen dangerously out of sync, so a controller can keep reconciling against a view of the world that's already stale.
+Every controller in kube-controller-manager works off a local cache built from watching the kube-apiserver, and that watch
+stream is only eventually consistent. A change can show up in milliseconds, or it can take seconds or even minutes under
+load. Today operators have no visibility into that lag and no way to tell a normal delay from a controller that's fallen
+dangerously out of sync, so a controller can keep reconciling against a view of the world that's already stale.
 
-Kubernetes v1.37 ships stale controller handling at Beta, opt-in per controller behind four feature gates. The core mechanism is a "read your writes" guarantee: client-go's `ResourceEventHandlerFuncs` gets a new `BookmarkFunc` callback so a controller can reliably track the resource version of objects it cares about, even through edge cases the existing add/update/delete callbacks miss. A controller records the resource version of its own writes and, on its next reconcile, skips and requeues until its informer cache has actually caught up to that write. The DaemonSet controller is a good example of this. It tracks DaemonSet → Pod resource versions so it won't re-reconcile against its own stale pod cache. A second, circuit-breaking variant targets latency-sensitive controllers like node-lifecycle, which can otherwise read a stale node lease from cache and wrongly decide it's expired; instead, it does a live GET on the disruptive decision and marks its cache "not ready" until it's caught up, rather than acting on a stale read. `StaleControllerConsistency` gates the mitigation itself (scoped initially to controllers KCM has flagged as high-scale), `MonitorInformerStaleness` is a separate, observation-only gate that polls the apiserver directly every 5 seconds purely to surface how far behind an informer's cache actually is, and `AtomicFIFO` / `UnlockWhileProcessingFIFO` are the underlying client-go workqueue plumbing the mitigation depends on. None of this changes default reconciler behavior; a paused-and-requeued controller can look stuck when it's really just waiting on its cache, and it rolls back cleanly since nothing it does is irreversible.
+Kubernetes v1.37 ships stale controller handling at Beta, opt-in per controller behind four feature gates. The core mechanism
+is a "read your writes" guarantee: client-go's `ResourceEventHandlerFuncs` gets a new `BookmarkFunc` callback so a controller
+can reliably track the resource version of objects it cares about, even through edge cases the existing add/update/delete
+callbacks miss. A controller records the resource version of its own writes and, on its next reconcile, skips and requeues
+until its informer cache has actually caught up to that write. The DaemonSet controller is a good example of this. It tracks
+DaemonSet → Pod resource versions so it won't re-reconcile against its own stale pod cache. A second, circuit-breaking
+variant targets latency-sensitive controllers like node-lifecycle, which can otherwise read a stale node lease from cache and
+wrongly decide it's expired; instead, it does a live GET on the disruptive decision and marks its cache "not ready" until
+it's caught up, rather than acting on a stale read. `StaleControllerConsistency` gates the mitigation itself (scoped
+initially to controllers KCM has flagged as high-scale), `MonitorInformerStaleness` is a separate, observation-only gate that
+polls the apiserver directly every 5 seconds purely to surface how far behind an informer's cache actually is, and
+`AtomicFIFO` / `UnlockWhileProcessingFIFO` are the underlying client-go workqueue plumbing the mitigation depends on. None of
+this changes default reconciler behavior; a paused-and-requeued controller can look stuck when it's really just waiting on
+its cache, and it rolls back cleanly since nothing it does is irreversible.
 
 This work was done as part of [KEP #5647: Stale Controller Mitigation](https://www.kubernetes.dev/resources/keps/5647) led by [SIG API Machinery](https://www.kubernetes.dev/community/community-groups/sigs/api-machinery/).
 
 ### Manifest-Based Admission Control Config 
 
-In Kubernetes, admission control is responsible for enforcing policies on resources before they are accepted by the API server. However, admission webhooks and policies configured through the Kubernetes API are dependent on the API server and etcd during cluster startup and cannot protect the admission configuration resources themselves. This creates a gap during cluster bootstrap and allows critical admission policies to be modified or removed by users with sufficient privileged access.
+In Kubernetes, admission control is responsible for enforcing policies on resources before they are accepted by the API
+server. However, admission webhooks and policies configured through the Kubernetes API are dependent on the API server and
+etcd during cluster startup and cannot protect the admission configuration resources themselves. This creates a gap during
+cluster bootstrap and allows critical admission policies to be modified or removed by users with sufficient privileged access.
 
-In Kubernetes v1.37, Manifest-Based Admission Control Config graduates to Beta, allowing admission webhooks and CEL-based policies to be loaded from manifest files on disk and enforced from API server startup. Because the configuration is managed independently of the Kubernetes API, it can also protect API-based admission resources from modification. Manifest files are watched for changes and valid updates are reloaded automatically, while invalid updates leave the previously loaded configuration in place. 
-
+In Kubernetes v1.37, Manifest-Based Admission Control Config graduates to Beta, allowing admission webhooks and CEL-based
+policies to be loaded from manifest files on disk and enforced from API server startup. Because the configuration is managed
+independently of the Kubernetes API, it can also protect API-based admission resources from modification. Manifest files are
+watched for changes and valid updates are reloaded automatically, while invalid updates leave the previously loaded
+configuration in place. 
 
 This work was done as part of [KEP #5793: Manifest-Based Admission Control Config ](https://www.kubernetes.dev/resources/keps/5793/) led by [SIG API Machinery](https://www.kubernetes.dev/community/community-groups/sigs/api-machinery/) 
 
 
 ### Handling undecryptable resources 
 
-Kubernetes stores resources in etcd, where encryption at rest can be used to protect sensitive data. However, when encrypted resources can no longer be decrypted, for example because the encryption key is unavailable, the API server cannot read or manage those resources normally. This can leave resources in the cluster that cannot be accessed through the Kubernetes API, requiring administrators to manually modify the underlying etc data to recover them.
+Kubernetes stores resources in etcd, where encryption at rest can be used to protect sensitive data. However, when encrypted
+resources can no longer be decrypted, for example because the encryption key is unavailable, the API server cannot read or
+manage those resources normally. This can leave resources in the cluster that cannot be accessed through the Kubernetes API,
+requiring administrators to manually modify the underlying etc data to recover them.
 
-In Kubernetes v1.37, Handling Undecryptable Resources graduates to Beta, providing a way for cluster administrators to identify and remove resources that cannot be decrypted by the API server. This allows affected resources to be removed via the Kubernetes API rather than directly manipulating the etc file. This feature also provides safeguards for administrators to verify affected resources before deletion. 
+In Kubernetes v1.37, Handling Undecryptable Resources graduates to Beta, providing a way for cluster administrators to
+identify and remove resources that cannot be decrypted by the API server. This allows affected resources to be removed via
+the Kubernetes API rather than directly manipulating the etc file. This feature also provides safeguards for administrators
+to verify affected resources before deletion. 
 
 This work was done as part of [KEP #3926](https://www.kubernetes.dev/resources/keps/3926/) led by [SIG Auth](https://www.kubernetes.dev/community/community-groups/sigs/auth/). 
 
@@ -340,8 +465,10 @@ This work was done as part of [KEP #3926](https://www.kubernetes.dev/resources/k
 
 ### New `Recreate` strategy for StatefulSet rollouts
 
-Kubernetes v1.37 introduces the `Recreate` strategy for `StatefulSet` rollouts. StatefulSets currently offer two update strategies: OnDelete (manual) and RollingUpdate (automatic, default). Similar to Deployments, the `Recreate` update strategy deletes all of the StatefulSet's Pods before creating new Pods that reflect modifications made to a StatefulSet's `.spec.template`. Using this
-strategy requires the `StatefulSetRecreateStrategy`[feature gate](/docs/reference/command-line-tools-reference/feature-gates/#StatefulSetRecreateStrategy) to be enabled. 
+Kubernetes v1.37 introduces the `Recreate` strategy for `StatefulSet` rollouts. StatefulSets currently offer two update
+strategies: OnDelete (manual) and RollingUpdate (automatic, default). Similar to Deployments, the `Recreate` update strategy
+deletes all of the StatefulSet's Pods before creating new Pods that reflect modifications made to a StatefulSet's
+`.spec.template`. Using this strategy requires the `StatefulSetRecreateStrategy`[feature gate](/docs/reference/command-linetools-reference/feature-gates/#StatefulSetRecreateStrategy) to be enabled. 
 
 This work was done as part of [KEP #3541: Add Recreate Update Strategy to StatefulSet](https://www.kubernetes.dev/resources/keps/3541/) led by [SIG Apps](https://www.kubernetes.dev/community/community-groups/sigs/apps/).
 
@@ -349,26 +476,35 @@ This work was done as part of [KEP #3541: Add Recreate Update Strategy to Statef
 
 #### DRA: Node Allocatable Resource Request
 
-Kubernetes v1.37 improves Alpha support for managing node resources such as CPU, memory, and huge pages through DRA. It coordinates standard and DRA resource accounting, helping prevent the same node capacity from being counted twice.
+Kubernetes v1.37 improves Alpha support for managing node resources such as CPU, memory, and huge pages through DRA. It
+coordinates standard and DRA resource accounting, helping prevent the same node capacity from being counted twice.
 
-The update supports direct allocations, such as exclusive CPUs, and device-related requirements, such as host memory overhead for accelerators. The kubelet can also use these allocations for cgroup configuration and OOM score adjustments.
+The update supports direct allocations, such as exclusive CPUs, and device-related requirements, such as host memory overhead
+for accelerators. The kubelet can also use these allocations for cgroup configuration and OOM score adjustments.
 
-This work was done as part of [KEP #5517: DRA Node Allocatable Resources](https://www.kubernetes.dev/resources/keps/5517/), led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/) with participation from [SIG Node](https://www.kubernetes.dev/community/community-groups/sigs/node/).
+This work was done as part of [KEP #5517: DRA Node Allocatable Resources](https://www.kubernetes.dev/resources/keps/5517/),
+led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/) with participation from [SIG Node](https://www.kubernetes.dev/community/community-groups/sigs/node/).
 
 #### DRA: Derived Attributes
 
-Kubernetes v1.37 introduces Alpha support for derived attributes in DRA. Workloads can use CEL expressions to create virtual attributes from device information and use them when selecting related devices.
+Kubernetes v1.37 introduces Alpha support for derived attributes in DRA. Workloads can use CEL expressions to create virtual
+attributes from device information and use them when selecting related devices.
 
-This makes it easier to co-locate devices such as GPUs and network interfaces, even when their drivers use different attribute names or formats. For example, a workload can derive a shared NUMA identifier and use it to select devices with matching topology.
+This makes it easier to co-locate devices such as GPUs and network interfaces, even when their drivers use different
+attribute names or formats. For example, a workload can derive a shared NUMA identifier and use it to select devices with
+matching topology.
 
 This work was done as part of [KEP #6080: DRA Derived Attributes](https://www.kubernetes.dev/resources/keps/6080/), led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/) with participation from [SIG Network](https://www.kubernetes.dev/community/community-groups/sigs/network/).
 
 #### DRA Device Compatibility Groups
 
-DRA can be used to manage devices that support different partitioning or virtualization schemes. However, some of these configurations cannot be used together on the same physical device, such as MIG and vGPU on a GPU. Previously, these incompatibilities could only be detected during device preparation, after the scheduler had already made its decision.
+DRA can be used to manage devices that support different partitioning or virtualization schemes. However, some of these
+configurations cannot be used together on the same physical device, such as MIG and vGPU on a GPU. Previously, these
+incompatibilities could only be detected during device preparation, after the scheduler had already made its decision.
 
-
-In Kubernetes v1.37, DRA  adds device compatibility groups, allowing resource drivers to describe which devices can be allocated together. The scheduler can use this information when making allocation decisions, preventing incomplete devices from being assigned together and avoiding Pod startup failures caused by incomplete device configurations. 
+In Kubernetes v1.37, DRA  adds device compatibility groups, allowing resource drivers to describe which devices can be
+allocated together. The scheduler can use this information when making allocation decisions, preventing incomplete devices
+from being assigned together and avoiding Pod startup failures caused by incomplete device configurations. 
 
 This work was done as part of [KEP #5963: DRA Device Compatibility Groups
 ](https://www.kubernetes.dev/resources/keps/5963/), led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/) with participation from [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/).
@@ -376,19 +512,34 @@ This work was done as part of [KEP #5963: DRA Device Compatibility Groups
 
 ### Scheduler Preemption for In-Place Pod Resize
 
-Kubernetes v1.37 introduces Scheduler Preemption for In-Place Pod Resize through the `InPlacePodVerticalScalingSchedulerPreemption` feature gate. This feature addresses an important scheduling gap observed when [In-Place Pod Vertical Scaling](https://kubernetes.io/blog/2025/12/19/kubernetes-v1-35-in-place-pod-resize-ga/) graduated to Stable: if a running pod requested additional resources that exceeded the node's available capacity, `kubelet` marked the request as `Deferred`, leaving the pod waiting until sufficient resources became available on the node. With this enhancement, the Kubernetes control plane can actively free up capacity on a fully-utilized node and preempt lower-priority workloads, enabling the pending in-place resizes of critical, higher-priority applications to succeed.
+Kubernetes v1.37 introduces Scheduler Preemption for In-Place Pod Resize through the
+`InPlacePodVerticalScalingSchedulerPreemption` feature gate. This feature addresses an important scheduling gap observed when
+[In-Place Pod Vertical Scaling](https://kubernetes.io/blog/2025/12/19/kubernetes-v1-35-in-place-pod-resize-ga/) graduated to
+Stable: if a running pod requested additional resources that exceeded the node's available capacity, `kubelet` marked the
+request as `Deferred`, leaving the pod waiting until sufficient resources became available on the node. With this
+enhancement, the Kubernetes control plane can actively free up capacity on a fully-utilized node and preempt lower-priority
+workloads, enabling the pending in-place resizes of critical, higher-priority applications to succeed.
 
 This work was done as part of [KEP #5836: Scheduler preemption for in-place Pod resize](https://www.kubernetes.dev/resources/keps/5836/) led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/).
 
 ### Dynamic resize of memory-backed volumes
 
-Building upon In-Place Pod Vertical Scaling, the Alpha InPlacePodVerticalScalingMemoryBackedVolumes feature extends the pod /resize subresource, which previously only enabled dynamic CPU and memory adjustments without restarting containers, to support updating the sizeLimit of memory-backed (medium: Memory) emptyDir volumes on running pods. When a volume's sizeLimit is explicitly adjusted via the /resize subresource, Kubelet dynamically updates the underlying tmpfs mount without container disruption while safely preventing out-of-memory errors or false-positive eviction triggers. This is particularly useful for stateful and memory-intensive workloads that rely on in-memory ephemeral storage, allowing them to dynamically scale storage limits alongside container memory capacity without incurring Pod restarts or application downtime. 
+Building upon In-Place Pod Vertical Scaling, the Alpha InPlacePodVerticalScalingMemoryBackedVolumes feature extends the pod
+/resize subresource, which previously only enabled dynamic CPU and memory adjustments without restarting containers, to
+support updating the sizeLimit of memory-backed (medium: Memory) emptyDir volumes on running pods. When a volume's sizeLimit
+is explicitly adjusted via the /resize subresource, Kubelet dynamically updates the underlying tmpfs mount without container
+disruption while safely preventing out-of-memory errors or false-positive eviction triggers. This is particularly useful for
+stateful and memory-intensive workloads that rely on in-memory ephemeral storage, allowing them to dynamically scale storage
+limits alongside container memory capacity without incurring Pod restarts or application downtime. 
 
 This work was done as part of [KEP #6030: Dynamic resize of memory-backed volumes](https://www.kubernetes.dev/resources/keps/6030/) led by [SIG Node](https://www.kubernetes.dev/community/community-groups/sigs/node/) and [SIG Storage](https://www.kubernetes.dev/community/community-groups/sigs/storage/).
 
 ### Specialized lifecycle management for Nodes
 
-Several Kubernetes components need to understand a Node's lifecycle state, and today each one infers it from a different mix of Node readiness, taints, Pod state, labels, annotations, and provider APIs. This enhancement introduces well-known lifecycle conditions on Nodes, giving administrators a single Kubernetes-owned place to publish lifecycle state that core controllers and ecosystem tooling can consume.
+Several Kubernetes components need to understand a Node's lifecycle state, and today each one infers it from a different mix
+of Node readiness, taints, Pod state, labels, annotations, and provider APIs. This enhancement introduces well-known
+lifecycle conditions on Nodes, giving administrators a single Kubernetes-owned place to publish lifecycle state that core
+controllers and ecosystem tooling can consume.
 
 This work was done as part of [KEP #5683: Specialized lifecycle management](https://www.kubernetes.dev/resources/keps/5683/) led by [SIG Node](https://www.kubernetes.dev/community/community-groups/sigs/node/).
 
@@ -396,27 +547,45 @@ This work was done as part of [KEP #5683: Specialized lifecycle management](http
 
 #### CompositePodGroup API
 
-Kubernetes v1.36 introduced multiple strides to implement scheduling on simple workloads with a flat structure. However, modern HPC distributed workloads are complex, heterogenous and have multi-level dependencies. Introduced in Kubernetes v1.37, this feature proposes a new `CompositePodGroup` API that lets Kubernetes describe complex workloads as a hierarchy of groups instead of treating everything as a flat set of Pods. This would enable multi-level gang scheduling, preemption, and topology-aware scheduling. 
+Kubernetes v1.36 introduced multiple strides to implement scheduling on simple workloads with a flat structure. However,
+modern HPC distributed workloads are complex, heterogenous and have multi-level dependencies. Introduced in Kubernetes v1.37,
+this feature proposes a new `CompositePodGroup` API that lets Kubernetes describe complex workloads as a hierarchy of groups
+instead of treating everything as a flat set of Pods. This would enable multi-level gang scheduling, preemption, and topology
+aware scheduling. 
 
 This work was done as part of [KEP #6012: CompositePodGroup API](https://www.kubernetes.dev/resources/keps/6012/) led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/)
 
 #### Controller integration API
 
-Introduced in Kubernetes v1.37, this feature proposes a common framework for integrating workload controllers(such as `JobSet` and `RayJob` along with core workloads such as `Job`) with Workload-aware Scheduling (WAS). It provides reusable `scheduling.k8s.io` API primitives, such as topology constraints and disruption policies, along with shared libraries that handle the creation of scheduling resources. This allows controllers to expose WAS features natively within their APIs in a consistent way without implementing the same scheduling logic separately.
+Introduced in Kubernetes v1.37, this feature proposes a common framework for integrating workload controllers(such as
+`JobSet` and `RayJob` along with core workloads such as `Job`) with Workload-aware Scheduling (WAS). It provides reusable
+`scheduling.k8s.io` API primitives, such as topology constraints and disruption policies, along with shared libraries that
+handle the creation of scheduling resources. This allows controllers to expose WAS features natively within their APIs in a
+consistent way without implementing the same scheduling logic separately.
 
 This work was done as part of [KEP #6089: Workload Aware Scheduling Controller APIs](https://www.kubernetes.dev/resources/keps/6089/) led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/)
 
 #### Integrate workload APIs with Job Controller
 
-Introduced in Kubernetes v1.37, this feature adds a user-facing `spec.scheduling` field to the `batch/v1` Job, allowing users to explicitly configure scheduling policies, topology constraints, disruption modes, and resource claims. If `spec.scheduling` is omitted, the Job defaults to Basic scheduling, preserving existing behavior while still creating a Basic Workload/PodGroup for workload-aware scheduling, without enforcing a minCount gate. Users can explicitly opt into Gang scheduling, where `minCount` defaults to the Job’s parallelism, and the controller uses the shared `workloadbuilder` library to translate the scheduling configuration into the corresponding Workload and PodGroup objects instead of implementing custom translation logic.
+Introduced in Kubernetes v1.37, this feature adds a user-facing `spec.scheduling` field to the `batch/v1` Job, allowing users
+to explicitly configure scheduling policies, topology constraints, disruption modes, and resource claims. If
+`spec.scheduling` is omitted, the Job defaults to Basic scheduling, preserving existing behavior while still creating a Basic
+Workload/PodGroup for workload-aware scheduling, without enforcing a minCount gate. Users can explicitly opt into Gang
+scheduling, where `minCount` defaults to the Job’s parallelism, and the controller uses the shared `workloadbuilder` library
+to translate the scheduling configuration into the corresponding Workload and PodGroup objects instead of implementing custom
+translation logic.
 
 This work was done as part of [KEP #5547: Integrate Workload APIs with the Job controller](https://www.kubernetes.dev/resources/keps/5547/) led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/). 
 
 ### localhost NodePort userspace proxy for nftables 
 
-Kubernetes v1.37 adds an opt-in username proxy to the nftables kube-proxy backend, allowing NodePort services to be accessed through `localhost` over IPv4 and IPv6. This closes a gap between the nftables and iptables backends, as nftables could not previously serve localhost NodePorts. 
+Kubernetes v1.37 adds an opt-in username proxy to the nftables kube-proxy backend, allowing NodePort services to be accessed
+through `localhost` over IPv4 and IPv6. This closes a gap between the nftables and iptables backends, as nftables could not
+previously serve localhost NodePorts. 
 
-The proxy is enabled when `localhost` or a loopback address is included in the kubeproxy `--nodeport-addresses` configuration. This can be useful for workloads such as local container registries that rely on `localhost:<NodePort>` connections. The existing behaviour of the iptables and ipvs backends is unchanged. 
+The proxy is enabled when `localhost` or a loopback address is included in the kubeproxy `--nodeport-addresses`
+configuration. This can be useful for workloads such as local container registries that rely on `localhost:<NodePort>`
+connections. The existing behaviour of the iptables and ipvs backends is unchanged. 
 
 This work was done as part of [KEP #6032: nftables Localhost NodePort Userspace Proxy](https://www.kubernetes.dev/resources/keps/6032/) led by [SIG Network](https://www.kubernetes.dev/community/community-groups/sigs/network/).
 
@@ -424,44 +593,52 @@ This work was done as part of [KEP #6032: nftables Localhost NodePort Userspace 
 
 ### `maxUnavailable` for StatefulSets back on by default 
 
-The `maxUnavailable` feature for StatefulSets has been re-enabled by default in Kubernetes v1.37 after a bug was observed in v1.36 where a faulty initial StatefulSet revision creates a pod that never becomes ready, and with MaxUnavailableStatefulSet enabled, the StatefulSet controller fails to update that pod to the newer, corrected revision, due to which it remains stuck in a CrashLoopBackOff state indefinitely.
+The `maxUnavailable` feature for StatefulSets has been re-enabled by default in Kubernetes v1.37 after a bug was observed in
+v1.36 where a faulty initial StatefulSet revision creates a pod that never becomes ready, and with MaxUnavailableStatefulSet
+enabled, the StatefulSet controller fails to update that pod to the newer, corrected revision, due to which it remains stuck
+in a CrashLoopBackOff state indefinitely.
 
 ### Improved `nftables` performance 
 
-kube-proxy now uses the kernel's netlink interface for nftables list operations, bypassing the nft command-line tool, significantly improving the efficiency of rule lookups and overall performance.
+kube-proxy now uses the kernel's netlink interface for nftables list operations, bypassing the nft command-line tool,
+significantly improving the efficiency of rule lookups and overall performance.
 
 ### Context handling and contextual logging in client-go
 
-Support for context propagation and contextual logging in client-go is complete, with the exception of a small number of authentication plugin log calls that still rely on the global klog logger because the underlying APIs do not support context passing.
+Support for context propagation and contextual logging in client-go is complete, with the exception of a small number of
+authentication plugin log calls that still rely on the global klog logger because the underlying APIs do not support context
+passing.
 
 ## Graduations, deprecations, and removals in v1.37
 
 ### Graduations to Stable
 
-This lists all the features that graduated to Stable (also known as general availability). For a full list of updates including new features and graduations from Alpha to Beta, see the release notes.
+This lists all the features that graduated to Stable (also known as general availability). For a full list of updates
+including new features and graduations from Alpha to Beta, see the release notes.
 
 This release includes a total of 16 enhancements promoted to Stable:
 
-[Speed up recursive SELinux label change](https://www.kubernetes.dev/resources/keps/1710/)
-[ClusterTrustBundles] (https://www.kubernetes.dev/resources/keps/3257/)
-[Pod Certificates] (https://www.kubernetes.dev/resources/keps/4317/)
-[Allow setting arbitrary FQDN as the pod's hostname] (https://www.kubernetes.dev/resources/keps/4762/) 
-[DRA: Resource Claim Status with possible standardized network interface data](https://www.kubernetes.dev/resources/keps/4817/) 
-[Configurable tolerance for Horizontal Pod Autoscalers] (https://www.kubernetes.dev/resources/keps/4951/)
-[Relaxed validation for Services names](https://www.kubernetes.dev/resources/keps/5311/) 
-[Add Resource Health Status to the Pod Status for Device Plugin and DRA](https://www.kubernetes.dev/resources/keps/4680/) 
-[DRA: device taints and tolerations](https://www.kubernetes.dev/resources/keps/5055/)
-[DRA: Handle extended resource requests via DRA Driver](https://www.kubernetes.dev/resources/keps/5004/) 
-[Node Declared Features](https://www.kubernetes.dev/resources/keps/5328/)
-[Add condition for sandbox creation](https://www.kubernetes.dev/resources/keps/3085/)
-[Move Storage Version Migrator in-tree](https://www.kubernetes.dev/resources/keps/4192/)
-[Resilient Watchcache Initialization](https://www.kubernetes.dev/resources/keps/4568/)
-[metrics.k8s.io API definition](https://www.kubernetes.dev/resources/keps/5207/)
-[KYAML](https://www.kubernetes.dev/resources/keps/5295/) 
+* [Speed up recursive SELinux label change](https://www.kubernetes.dev/resources/keps/1710/)
+* [ClusterTrustBundles] (https://www.kubernetes.dev/resources/keps/3257/)
+* [Pod Certificates] (https://www.kubernetes.dev/resources/keps/4317/)
+* [Allow setting arbitrary FQDN as the pod's hostname] (https://www.kubernetes.dev/resources/keps/4762/) 
+* [DRA: Resource Claim Status with possible standardized network interface data](https://www.kubernetes.dev/resources/keps/4817/) 
+* [Configurable tolerance for Horizontal Pod Autoscalers] (https://www.kubernetes.dev/resources/keps/4951/)
+* [Relaxed validation for Services names](https://www.kubernetes.dev/resources/keps/5311/) 
+* [Add Resource Health Status to the Pod Status for Device Plugin and DRA](https://www.kubernetes.dev/resources/keps/4680/) 
+* [DRA: device taints and tolerations](https://www.kubernetes.dev/resources/keps/5055/)
+* [DRA: Handle extended resource requests via DRA Driver](https://www.kubernetes.dev/resources/keps/5004/) 
+* [Node Declared Features](https://www.kubernetes.dev/resources/keps/5328/)
+* [Add condition for sandbox creation](https://www.kubernetes.dev/resources/keps/3085/)
+* [Move Storage Version Migrator in-tree](https://www.kubernetes.dev/resources/keps/4192/)
+* [Resilient Watchcache Initialization](https://www.kubernetes.dev/resources/keps/4568/)
+* [metrics.k8s.io API definition](https://www.kubernetes.dev/resources/keps/5207/)
+* [KYAML](https://www.kubernetes.dev/resources/keps/5295/) 
 
 ## Deprecations, Removals and Community Updates
 
-As Kubernetes develops and matures, features may be deprecated, removed, or replaced with better ones for the project's overall health. 
+As Kubernetes develops and matures, features may be deprecated, removed, or replaced with better ones for the project's
+overall health. 
 See the Kubernetes [deprecation and removal policy](/docs/reference/using-api/deprecation-policy/) for more details on this process.
 Many of these deprecations and removals were announced in the [Deprecations and Removals blog](https://kubernetes.io/blog/2026/07/31/kubernetes-v1-37-sneak-peek/)
 
@@ -486,41 +663,52 @@ Check out the full details of the Kubernetes v1.37 release in our [release notes
 
 ### Availability
 
-Kubernetes v1.37 is available for download on [GitHub](https://github.com/kubernetes/kubernetes/releases/tag/v1.37.0) or on the [Kubernetes download page](/releases/download/). 
+Kubernetes v1.37 is available for download on [GitHub](https://github.com/kubernetes/kubernetes/releases/tag/v1.37.0) or on
+the [Kubernetes download page](/releases/download/). 
 
-To get started with Kubernetes, check out these [interactive tutorials](/docs/tutorials/) or run local Kubernetes clusters using [minikube](https://minikube.sigs.k8s.io/).
+To get started with Kubernetes, check out these [interactive tutorials](/docs/tutorials/) or run local Kubernetes clusters
+using [minikube](https://minikube.sigs.k8s.io/).
 
 You can also easily install v1.37 using [kubeadm](/docs/setup/independent/create-cluster-kubeadm/). 
 
 ### Release Team
 
 Kubernetes is only possible with the support, commitment, and hard work of its community. 
-Each release team is made up of dedicated community volunteers who work together to build the many pieces that make up the Kubernetes releases you rely on. 
+Each release team is made up of dedicated community volunteers who work together to build the many pieces that make up the
+Kubernetes releases you rely on. 
 
-This requires the specialized skills of people from all corners of our community, from the code itself to its documentation and project management.
+This requires the specialized skills of people from all corners of our community, from the code itself to its documentation
+and project management.
 
 We would like to thank the entire [release team](https://github.com/kubernetes/sig-release/blob/master/releases/release-1.37/release-team.md) for the hours spent hard at work to deliver the Kubernetes v1.37 release to our community. 
 
-The Release Team's membership ranges from first-time shadows to returning team leads with experience forged over several release cycles. 
+The Release Team's membership ranges from first-time shadows to returning team leads with experience forged over several
+release cycles. 
 
-A very special thanks goes out to our release lead, [Dipesh Rawat](https://github.com/dipesh-rawat), for supporting us through a successful release cycle, advocating for us, making sure that we could all contribute in the best way possible, and challenging us to improve the release process.
+A very special thanks goes out to our release lead, [Dipesh Rawat](https://github.com/dipesh-rawat), for supporting us
+through a successful release cycle, advocating for us, making sure that we could all contribute in the best way possible, and
+challenging us to improve the release process.
 
 ### Project Velocity
 
 The CNCF K8s [DevStats](https://k8s.devstats.cncf.io/d/11/companies-contributing-in-repository-groups?orgId=1&var-period=m&var-repogroup_name=All) project aggregates a number of interesting data points related to the velocity of Kubernetes and various sub-projects. 
 
-This includes everything from individual contributions to the number of companies that are contributing and is an illustration of the depth and breadth of effort that goes into evolving this ecosystem.
+This includes everything from individual contributions to the number of companies that are contributing and is an
+illustration of the depth and breadth of effort that goes into evolving this ecosystem.
 
-In the v1.37 release cycle, which ran for 15 weeks from May 18th, 2026, to August 26th, 2026, we saw contributions to Kubernetes from 212 different companies and 1709 individuals.
+In the v1.37 release cycle, which ran for 15 weeks from May 18th, 2026, to August 26th, 2026, we saw contributions to
+Kubernetes from 212 different companies and 1709 individuals.
 
 Source for this data: 
 
 - [Companies contributing to Kubernetes](https://k8s.devstats.cncf.io/d/11/companies-contributing-in-repository-groups?orgId=1&from=1779058800000&to=now&var-period=d28&var-repogroup_name=All&var-repo_name=kubernetes%2Fkubernetes)
 - [Overall ecosystem contributions](https://k8s.devstats.cncf.io/d/11/companies-contributing-in-repository-groups?orgId=1&from=1779055200000&to=now%20&var-period=d28&var-repogroup_name=All&var-repo_name=kubernetes%2Fkubernetes)
 
-By contribution we mean when someone makes a commit, code review, comment, creates an issue or PR, reviews a PR (including blogs and documentation), or comments on issues and PRs.
+By contribution we mean when someone makes a commit, code review, comment, creates an issue or PR, reviews a PR (including
+blogs and documentation), or comments on issues and PRs.
 
-If you are interested in contributing, see our [getting started](https://www.kubernetes.dev/docs/guide/#getting-started) page. 
+If you are interested in contributing, see our [getting started](https://www.kubernetes.dev/docs/guide/#getting-started)
+page. 
 
 ### Event update
 
