@@ -25,24 +25,10 @@ Of those enhancements, 16 have graduated to Stable, 23 have graduated to Beta,
 
 {{< figure src="k8s-1.37.svg" alt="Kubernetes v1.37 <release theme> logo" class="release-logo" >}}
 
-## Release highlights
-
-<MESSAGE ABOUT THE HIGHLIGHTS BELOW AND WHY THEY WERE CHOSEN>
-
-### <THEME 1>
-
-### <THEME 2>
-
-### <THEME 3>
-
-### <THEME 4>
-
-### <THEME 5>
-
 ## Spotlight on key updates
 
-Kubernetes v1.37 is packed with new features and improvements. Here are a
-few select updates the Release Team would like to highlight!
+Kubernetes v1.37 is packed with new features and improvements. Here are a few select updates the Release Team would like to
+highlight!
 
 ### Stable: Resilient Watchcache Initialization
 
