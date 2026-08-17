@@ -66,9 +66,7 @@ failure, and natively preserving in-memory state across node maintenance.
 This work was done as part of [KEP-5823](https://www.kubernetes.dev/resources/keps/5823) led by
 [SIG Node](https://www.kubernetes.dev/community/community-groups/sigs/node/).
 
-## Graduations, deprecations, and removals in v1.37
-
-### Graduations to Stable
+## Features graduating to Stable
 
 This lists all the features that graduated to Stable (also known as _General Availability_). For a full list of updates
 including new features and graduations from Alpha to Beta, see the release notes.
@@ -245,7 +243,7 @@ A workload then opts into this identity by defining a `podCertificate` projected
 
 This work was done as part of two KEPs - [KEP #4317](https://www.kubernetes.dev/resources/keps/4317/) and [KEP #3257: Cluster Trust Bundles](https://www.kubernetes.dev/resources/keps/3257/) led by [SIG Auth](https://www.kubernetes.dev/community/community-groups/sigs/auth/).
 
-## New features in Beta
+## Features graduating to Beta
 
 ### Gang scheduling support in Kubernetes
 
@@ -350,12 +348,7 @@ This work was done as part of [KEP #2570](https://www.kubernetes.dev/resources/k
 
 ### Pod-level resource managers 
 
-In Kubernetes v1.37, _Pod-level resource managers_ graduate to Beta, allowing the topology, CPU, and memory resource managers to use the
-
-resources defined for an entire Pod when making allocation and NUMA alignment decisions. This makes it possible to manage a
-
-Pod as a single resource unit while still supporting different resource requirements between the containers within it.
-
+In Kubernetes v1.37, _Pod-level resource managers_ graduate to Beta, allowing the topology, CPU, and memory resource managers to use the resources defined for an entire Pod when making allocation and NUMA alignment decisions. This makes it possible to manage a Pod as a single resource unit while still supporting different resource requirements between the containers within it.
 
 With pod-level resource management, a Pod can reserve a NUMA-aligned pool of CPU and memory based on its overall resource budget. Containers that require dedicated resources can receive exclusive portions of that pool, while other containers, such as sidecars or supporting workloads, can share the remaining resources. This is particularly useful for performance-sensitive workloads such as AI/ML and high-performance computing, where keeping resources close to each other on the same NUMA node can improve performance without requiring every container in the Pod to have dedicated resources. 
 
@@ -365,10 +358,7 @@ This work was done as part of [KEP #5526](https://www.kubernetes.dev/resources/k
 
 ### Watch-based route controller reconciliation
 
-The route controller in the cloud-controller-manager library previously reconciled routes on a fixed interval, by default every 10 seconds.
-
-This could result in unnecessary requests to infrastructure providers, even when nothing had changed and could also delay route updates when a new Node is added. 
-
+The route controller in the cloud-controller-manager library previously reconciled routes on a fixed interval, by default every 10 seconds. This could result in unnecessary requests to infrastructure providers, even when nothing had changed and could also delay route updates when a new Node is added. 
 
 In v1.37, the route controller switches to a watch-based reconciliation approach. Instead of waiting for the next fixed interval, the controller can start a reconciliation when relevant Node changes occur, such as a Node being added or removed or when its addresses or assigned Pod CIDRs change. A less frequent periodic reconciliation is still used to catch outdated routes and keep the state consistent. 
 
@@ -406,7 +396,6 @@ Kubernetes v1.37 graduates PVC "last used" tracking to Beta behind the `Persiste
 This work was done as part of [KEP #5541](https://www.kubernetes.dev/resources/keps/5541/) led by [SIG Storage](https://www.kubernetes.dev/community/community-groups/sigs/storage/).
 
 ### etcd RangeStream support
-
 
 etcd's unary `Range` RPC builds an entire response in memory before sending it back, which becomes a problem at scale. On a large list, say kube-apiserver's watch cache warming up on a big cluster, the raw key-value slice, its serialized protobuf form, and the gRPC send buffer all have to coexist in memory at once, and the resulting spikes ripple through kube-apiserver too. Pagination doesn't really fix the underlying cost either because each paginated page still walks the entire B-tree index to recompute the total result count, turning what should be an O(limit) operation into an O(total_keys) one on every single page.
 
