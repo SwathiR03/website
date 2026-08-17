@@ -748,8 +748,7 @@ Using this override should be considered a short-term fix. Advanced resource man
 Resizing and Tiered Memory Protection, depend entirely on cgroup v2. While the override remains available in Kubernetes
 v1.37, users are encouraged to migrate to cgroup v2, as support for cgroup v1 is planned to be removed in a future release.
 
-To learn more about this deprecation, refer to [KEP-5573: Remove cgroup v1 support
-(https://kubernetes.dev/resources/keps/5573).
+To learn more about this deprecation, refer to [KEP-5573](https://kubernetes.dev/resources/keps/5573).
 
 ### Release notes
 
