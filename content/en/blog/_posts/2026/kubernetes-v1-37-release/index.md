@@ -13,7 +13,7 @@ release_announcement:
 ---
 **Editors:** Arsh Sharma, Christopher Tineo, Kirti Goyal, Sophia Ugochukwu, Swathi Rao, Troy Connor
 
-Similar to previous releases, the release of Kubernetes v1.37 introduces new Stable, Beta, and Alpha features. The consistent delivery of high-quality releases underscores the strength of our development cycle and the vibrant support from our community.
+Similar to previous releases, the release of [Kubernetes v1.37](https://kubernetes.io/releases/1.37/) introduces new Stable, Beta, and Alpha features. The consistent delivery of high-quality releases underscores the strength of our development cycle and the vibrant support from our community.
 
 This release consists of 67 enhancements.
 Of those enhancements, 16 have graduated to Stable, 23 have graduated to Beta,
