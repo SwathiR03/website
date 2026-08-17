@@ -702,13 +702,54 @@ CoreDNS has been the default cluster DNS add-on since Kubernetes v1.13, and `kub
 
 If you still run `kube-dns`, [start planning to migrate your clusters to CoreDNS](/docs/tasks/administer-cluster/coredns/).
 
-### Deprecation of `v1.Endpoints` and associated controllers
+### Deprecating kube-proxy's support for `ipvs` mode
 
-`v1.Endpoints` has been effectively deprecated since EndpointSlices went Stable in v1.21. Newer Service features such as dual-stack, topology, and Services with more than 1000 endpoints are implemented only for EndpointSlice. 
+`kube-proxy` support for `ipvs` mode was introduced in v1.8 to resolve `iptables` performance bottlenecks. However, since the
+kernel `ipvs` API alone cannot fully implement Kubernetes Services, `ipvs` mode continues to use `iptables` underneath 
+([KEP-3866, "The ipvs mode of kube-proxy will not save us"](https://github.com/kubernetes/enhancements/blob/master/keps/sig-network/3866-nftables-proxy/README.md#the-ipvs-mode-of-kube-proxy-will-not-save-us)).
 
-kube-proxy no longer reads Endpoints at all, and Gateway API conformance requires implementations to use EndpointSlices. Despite that, kube-controller-manager still manages Endpoints objects for every Service. Kubernetes v1.37 carries the second stage of a staged, multi-release deprecation.
+Clusters running `kube-proxy` in ipvs mode (or mode: ipvs in KubeProxyConfiguration) would now be logging a deprecation warning on startup. The deprecation timeline looks like this:
+- By v1.40, `ipvs` mode for `kube-proxy` is expected to be disabled by default (still selectable via the feature gate)
+- By v1.43, support for `ipvs` mode would be removed entirely [KEP-5495, Graduation Criteria](https://github.com/kubernetes/enhancements/blob/master/keps/sig-network/5495-deprecate-ipvs-mode-in-kube-proxy/README.md#graduation-criteria).
+To confirm which mode you’re currently running, use:
 
-This work was done as part of [KEP #4974: Deprecate v1.Endpoints and associated controllers](https://www.kubernetes.dev/resources/keps/4974/) led by [SIG Network](https://www.kubernetes.dev/community/community-groups/sigs/network/).
+```bash
+kubectl -n kube-system get configmap kube-proxy -o jsonpath='{.data.config\.conf}' | grep 'mode:'
+```
+
+To understand the rationale behind this deprecation, see [KEP-5495: Deprecate ipvs mode in kube-proxy](https://kubernetes.dev/resources/keps/5495).
+
+### Kubectl: `kubectl run --filename/-f` to be deprecated
+
+The `--filename` (or `-f`) flag for `kubectl run` is being deprecated as the generated pod is always built purely from CLI arguments like `NAME` and `--image`.
+
+See [kubernetes/kubernetes#138671](https://github.com/kubernetes/kubernetes/issues/138671) for the original issue and discussion.
+
+### Kubelet: Static Pods can no longer reference Secrets or ConfigMaps
+
+Static Pods were never meant to read API resources directly, since they aren't created through the API server — but a bug let them reference Secrets or ConfigMaps via fields like `configMapRef` or `secretRef`. That bug is now fixed: as of v1.37 these references are strictly prohibited, and the `PreventStaticPodAPIReferences` feature gate that previously let you opt out of the restriction has been removed.
+
+See [kubernetes/kubernetes#140226](https://github.com/kubernetes/kubernetes/issues/140226) for the original issue and discussion.
+
+### Ongoing major change: Future removal of cgroup v1 support
+
+As modern Linux distributions and container runtimes use [cgroup v2](/docs/concepts/architecture/cgroups/) as the default,
+support for the legacy cgroup v1 is officially being phased out. Since the v1.35 release, the `failCgroupV1` setting has
+defaulted to true. Consequently, the `kubelet` will fail to initialize on any nodes that still rely on cgroup v1 unless an
+explicit configuration override is applied.
+
+```yaml
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+failCgroupV1: false # temporary override
+```
+
+Using this override should be considered a short-term fix. Advanced resource management capabilities, such as In-Place Pod
+Resizing and Tiered Memory Protection, depend entirely on cgroup v2. While the override remains available in Kubernetes
+v1.37, users are encouraged to migrate to cgroup v2, as support for cgroup v1 is planned to be removed in a future release.
+
+To learn more about this deprecation, refer to [KEP-5573: Remove cgroup v1 support
+(https://kubernetes.dev/resources/keps/5573).
 
 ### Release notes
 
