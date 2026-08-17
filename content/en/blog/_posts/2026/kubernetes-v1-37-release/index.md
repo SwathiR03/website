@@ -73,7 +73,7 @@ This work was done as part of [KEP-5823](https://www.kubernetes.dev/resources/ke
 This lists all the features that graduated to Stable (also known as _General Availability_). For a full list of updates
 including new features and graduations from Alpha to Beta, see the release notes.
 
-This release includes a total of 16 enhancements promoted to Stable :
+This release includes a total of 16 enhancements promoted to Stable:
 
 ### KYAML 
 
