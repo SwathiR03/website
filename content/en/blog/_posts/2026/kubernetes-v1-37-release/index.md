@@ -32,8 +32,8 @@ highlight!
 
 ### Stable: Resilient watchcache initialization
 
-Kubernetes v1.37 sees the Resilient Watchcache Initialization graduate to Stable. This `kube-apiserver` feature gate,
-`WatchCacheInitializationPostStartHook`, was enabled by default since v1.36.  This hardens the API server startup and
+Kubernetes v1.37 sees _resilient watch cache initialization_ graduate to Stable.
+This `kube-apiserver` feature was enabled by default since v1.36, hardening the API server at startup and during
 recovery.  Watchcache initialization and reinitialization no longer create the thundering-herd requests against etcd, and
 requests are handled gracefully instead of piling up while the cache warms. 
 
