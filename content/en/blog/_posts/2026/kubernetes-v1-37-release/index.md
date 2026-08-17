@@ -30,7 +30,7 @@ Of those enhancements, 16 have graduated to Stable, 23 have graduated to Beta,
 Kubernetes v1.37 is packed with new features and improvements. Here are a few select updates the Release Team would like to
 highlight!
 
-### Stable: Resilient Watchcache Initialization
+### Stable: Resilient watchcache initialization
 
 Kubernetes v1.37 sees the Resilient Watchcache Initialization graduate to Stable. This `kube-apiserver` feature gate,
 `WatchCacheInitializationPostStartHook`, was enabled by default since v1.36.  This hardens the API server startup and
