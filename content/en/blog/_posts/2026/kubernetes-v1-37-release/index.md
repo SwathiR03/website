@@ -48,7 +48,9 @@ In Kubernetes v1.37, the feature gate `HPAScaleToZero` is graduating to Beta.  F
 enabled by default starting with Kubernetes v1.37.  This allows for Horizontal Pod Autoscalers to scale workloads using
 object or external metrics down to zero pods when idle, then restore them when demand returns.  This can reduce costs for
 queue consumers, batch jobs, and GPU workloads. Setting the `spec.minReplicas` to `0`  applies this functionality for workloads. 
-CPU and memory metrics are unsupported because they depend on active pods. While the HorizontalPodAutoscaler is holding a
+CPU and memory metrics are unsupported because they depend on active pods. 
+
+While the HorizontalPodAutoscaler is holding a
 workload at zero replicas, it records a `ScaledToZero` condition with `True` in the HorizontalPodAutoscaler's status. The
 `HorizontalPodAutoscaler` uses this condition to distinguish a workload that it scaled to zero (and will scale back up when
 the metric returns) from one that was manually deactivated by setting its replica count to 0. Once the workload is scaled
