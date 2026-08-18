@@ -37,7 +37,7 @@ This `kube-apiserver` feature was enabled by default since v1.36, hardening the 
 recovery.  Watchcache initialization and reinitialization no longer create the thundering-herd requests against `etcd`, and
 requests are handled gracefully instead of piling up while the cache warms. 
 
-Instead of allowing expensive list and watch requests to overload etcd or exhaust API Priority and Fairness capacity, `kube-apiserver` now safely delegates bounded requests and rejects others with HTTP 429 responses. This reduces the risk of control
+Instead of allowing expensive list and watch requests to overload `etcd` or exhaust API Priority and Fairness capacity, `kube-apiserver` now safely delegates bounded requests and rejects others with HTTP 429 responses. This reduces the risk of control
 plane outages in large clusters.  Clients (including custom controllers and operators) should be designed to handle HTTP `429 Too Many Requests` responses gracefully by respecting `Retry-After` headers and implementing exponential backoff. 
 
 This work was done as part of [KEP #4568](https://www.kubernetes.dev/resources/keps/4568/) led by [SIG API Machinery](https://www.kubernetes.dev/community/community-groups/sigs/api-machinery/).
