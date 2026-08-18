@@ -493,8 +493,7 @@ This work was done as part of [KEP #3541](https://www.kubernetes.dev/resources/k
 Kubernetes v1.37 improves Alpha support for managing node resources such as CPU, memory, and huge pages through DRA. It
 coordinates standard and DRA resource accounting, helping prevent the same node capacity from being counted twice.
 
-The update supports direct allocations, such as exclusive CPUs, and device-related requirements, such as host memory overhead
-for accelerators. The kubelet can also use these allocations for cgroup configuration and OOM score adjustments.
+This update introduces distinct API fields for `mapping` (for devices directly modeling core resources, like CPU/memory DRA drivers) and `overhead` (like auxiliary host memory for accelerator devices). The kubelet now enforces these allocations across pod and container cgroups, integrates them with Memory QoS, OOM score calculations, and in-place pod resizing.
 
 This work was done as part of [KEP #5517](https://www.kubernetes.dev/resources/keps/5517/),
 led by [SIG Scheduling](https://www.kubernetes.dev/community/community-groups/sigs/scheduling/) with participation from [SIG Node](https://www.kubernetes.dev/community/community-groups/sigs/node/).
